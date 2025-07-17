@@ -27,6 +27,66 @@ export default function MazeGame() {
   const [cellSize, setCellSize] = useState(MIN_CELL_SIZE);
   const [showSuccess, setShowSuccess] = useState(false);
   const [moveCount, setMoveCount] = useState(0);
+  const [audioContext] = useState<AudioContext | null>(() => new (window.AudioContext || (window as any).webkitAudioContext)());
+  
+  
+
+  // Create audio for wall collision
+  const playWallHitSound = () => {
+    if (!audioContext) return;
+    
+    const oscillator = audioContext.createOscillator();
+    const gainNode = audioContext.createGain();
+    
+    oscillator.type = 'square';
+    oscillator.frequency.setValueAtTime(150, audioContext.currentTime);
+    gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
+    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.2);
+    
+    oscillator.connect(gainNode);
+    gainNode.connect(audioContext.destination);
+    
+    oscillator.start();
+    oscillator.stop(audioContext.currentTime + 0.2);
+  };
+
+  // Create beacon sound that changes with distance to goal
+  const playBeaconSound = (distance: number) => {
+    if (!audioContext || !gameState) return;
+    
+    const maxDistance = Math.sqrt(
+      Math.pow(gameState.maze_layout[0].length, 2) + 
+      Math.pow(gameState.maze_layout.length, 2)
+    );
+    
+    const normalizedDistance = distance / maxDistance;
+    const frequency = 300 + (1 - normalizedDistance) * 500; // Higher pitch as you get closer
+    const volume = 0.05 + (1 - normalizedDistance) * 0.15; // Louder as you get closer
+    
+    // Calculate horizontal direction to goal
+    const xDiff = gameState.goal_position.x - gameState.player_position.x;
+    const panValue = Math.max(-1, Math.min(1, xDiff / 5)); // Normalize to -1 to 1 range
+    
+    const oscillator = audioContext.createOscillator();
+    const gainNode = audioContext.createGain();
+    const panner = audioContext.createStereoPanner();
+    
+    oscillator.type = 'sine';
+    oscillator.frequency.setValueAtTime(frequency, audioContext.currentTime);
+    gainNode.gain.setValueAtTime(volume, audioContext.currentTime);
+    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.3);
+    panner.pan.setValueAtTime(panValue, audioContext.currentTime);
+    
+    oscillator.connect(gainNode);
+    gainNode.connect(panner);
+    panner.connect(audioContext.destination);
+    
+    oscillator.start();
+    oscillator.stop(audioContext.currentTime + 0.3);
+    
+    // Calculate direction for audio panning
+    const direction = xDiff > 0 ? "right" : xDiff < 0 ? "left" : "straight ahead";
+  };
 
   // Calculate cell size based on window size and maze dimensions
   useEffect(() => {
@@ -87,9 +147,21 @@ export default function MazeGame() {
       const response = await axios.post(`http://localhost:8000/game/${gameId}/move`, {
         direction
       });
-      setGameState(response.data);
 
+      // If move was invalid (hit a wall), play wall hit sound
+      if (!response.data) {
+        playWallHitSound();
+        return;
+      }
+
+      setGameState(response.data);
       setMoveCount(prev => prev + 1);
+      // Calculate distance to goal and play beacon sound
+      const distance = Math.sqrt(
+        Math.pow(response.data.player_position.x - response.data.goal_position.x, 2) +
+        Math.pow(response.data.player_position.y - response.data.goal_position.y, 2)
+      );
+      playBeaconSound(distance);
       
       if (response.data.game_over) {
         setShowSuccess(true);
@@ -100,6 +172,7 @@ export default function MazeGame() {
       }
     } catch (error) {
       console.error('Error moving player:', error);
+      playWallHitSound(); // Play wall hit sound on invalid moves
     }
   };
 
