@@ -11,6 +11,7 @@ import {
 import { messages } from '../../constants/messages';
 import { speakMessage } from '../../utils/speakmessage';
 import { ScoreDisplay } from '../molecules/ScoreDisplay';
+import { getBestMazeScore, getBestTilesScore } from '../../utils/highScoreUtils';
 
 const API_BASE_URL =
   import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000';
@@ -38,9 +39,11 @@ interface MazeGameProps {
 export default function MazeGame({ onBackToLanding }: MazeGameProps) {
   const [gameId, setGameId] = useState<string | null>(null);
   const [gameState, setGameState] = useState<GameState | null>(null);
+  const [bestScore, setBestScore] = useState<number | null>(null);
   const [loading, setLoading] = useState(true);
   const [cellSize, setCellSize] = useState(MIN_CELL_SIZE);
   const [showSuccess, setShowSuccess] = useState(false);
+  const [isNewRecord, setIsNewRecord] = useState(false);
   const [moveCount, setMoveCount] = useState(0);
   const [audioContext] = useState<AudioContext | null>(
     () => new (window.AudioContext || (window as any).webkitAudioContext)()
@@ -177,6 +180,13 @@ export default function MazeGame({ onBackToLanding }: MazeGameProps) {
   useEffect(() => {
     startNewGame();
   }, []);
+
+  useEffect(() => {
+    if (gameState) {
+      setBestScore(getBestMazeScore());
+      console.log(getBestMazeScore())
+    }
+  }, [gameState]);
 
   const startNewGame = async () => {
     try {
@@ -523,8 +533,8 @@ export default function MazeGame({ onBackToLanding }: MazeGameProps) {
         </button>
         <ScoreDisplay
           currentScore={moveCount}
-          bestScore={100}
-          isNewRecord={true}
+          bestScore={bestScore}
+          isNewRecord={bestScore !== null && moveCount < bestScore && showSuccess}
           gameType="tiles"
         />
       </div>
