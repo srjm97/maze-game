@@ -12,6 +12,8 @@ export const AUDIO_CONFIG = {
   WALL_HIT_DURATION: 0.2,
   BEACON_BASE_FREQUENCY: 300,
   BEACON_RANGE: 500,
+  MATCH_SOUND_FREQUENCY: 440,
+  MATCH_SOUND_DURATION: 0.3,
   VICTORY_MELODY: [
     { freq: 523, duration: 0.3 }, // C5
     { freq: 659, duration: 0.3 }, // E5

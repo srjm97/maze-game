@@ -34,7 +34,7 @@ function App() {
           <div style={{
             animation: 'fadeIn 0.5s ease'
           }}>
-            {/* <TilesGame onBackToMenu={handleBackToMenu} /> */}
+            <TilesGame onBackToMenu={handleBackToMenu} />
           </div>
         ) : (
           <LandingPage onGameSelect={handleGameSelect} />

@@ -3,9 +3,10 @@ import React from 'react';
 interface VictoryModalProps {
   isVisible: boolean;
   moveCount: number;
+  customMessage?: string;
 }
 
-export const VictoryModal: React.FC<VictoryModalProps> = ({ isVisible, moveCount }) => {
+export const VictoryModal: React.FC<VictoryModalProps> = ({ isVisible, moveCount,customMessage }) => {
   if (!isVisible) return null;
 
   return (
