@@ -159,6 +159,23 @@ async def get_nearby_walls(game_id: str):
         raise HTTPException(status_code=404, detail="Game not found")
     return games[game_id].get_nearby_walls()
 
+@app.post("/score/add")
+async def add_score(
+    user_email: str = Query(...),
+    game_name: str = Query(...),
+    score: int = Query(...),
+    db = Depends(get_database)
+):
+    """Add a score for a user in a specific game"""
+    score_doc = {
+        "user_email": user_email,
+        "game_name": game_name,
+        "score": score,
+        "created_at": datetime.now()
+    }
+    result = await db.scores.insert_one(score_doc)
+    return {"message": "Score added", "score_id": str(result.inserted_id)}
+
 @app.get("/score/highest")
 async def get_highest_score(
     user_email: str = Query(...),
