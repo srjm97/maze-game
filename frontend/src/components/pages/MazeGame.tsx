@@ -11,7 +11,7 @@ import {
 import { messages } from '../../constants/messages';
 import { speakMessage } from '../../utils/speakmessage';
 import { ScoreDisplay } from '../molecules/ScoreDisplay';
-import { getBestMazeScore, getBestTilesScore } from '../../utils/highScoreUtils';
+import { getBestMazeScore, addMazeScore } from '../../utils/highScoreUtils';
 
 const API_BASE_URL =
   import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000';
@@ -181,17 +181,18 @@ export default function MazeGame({ onBackToLanding }: MazeGameProps) {
     startNewGame();
   }, []);
 
+  // Load best score when component mounts
   useEffect(() => {
-    if (gameState) {
-      setBestScore(getBestMazeScore());
-      console.log(getBestMazeScore())
-    }
-  }, [gameState]);
+    setBestScore(getBestMazeScore());
+  }, []);
 
   const startNewGame = async () => {
     try {
       setLoading(true);
       setMoveCount(0); // Reset move count for new game
+      setIsNewRecord(false); // Reset new record flag
+      setShowSuccess(false); // Hide success message
+      
       const response = await axios.post(`${API_BASE_URL}/game`, {
         width: 15,
         height: 15,
@@ -233,12 +234,23 @@ export default function MazeGame({ onBackToLanding }: MazeGameProps) {
       }
 
       setGameState(response.data);
-      setMoveCount((prev) => prev + 1);
+      const newMoveCount = moveCount + 1;
+      setMoveCount(newMoveCount);
 
       if (response.data.game_over) {
+        // Save the score and check if it's a new record
+        const scoreResult = addMazeScore(newMoveCount);
+        setIsNewRecord(scoreResult.isNewRecord);
+        
+        // Update best score display
+        setBestScore(getBestMazeScore());
+        
         // Play victory music, speak victory message, and show success message
         playVictoryMusic();
-        speakMessage(messages.victory);
+        speakMessage(scoreResult.isNewRecord ? 
+          `${messages.victory} New record with ${newMoveCount} moves!` : 
+          messages.victory
+        );
         setShowSuccess(true);
         setTimeout(() => {
           setShowSuccess(false);
@@ -296,7 +308,7 @@ export default function MazeGame({ onBackToLanding }: MazeGameProps) {
 
     window.addEventListener('keydown', handleGlobalKeyPress);
     return () => window.removeEventListener('keydown', handleGlobalKeyPress);
-  }, [gameId, gameState]);
+  }, [gameId, gameState, moveCount]);
 
   if (loading || !gameState) {
     return <div>Loading...</div>;
@@ -409,7 +421,9 @@ export default function MazeGame({ onBackToLanding }: MazeGameProps) {
       {showSuccess && (
         <div className="success-overlay">
           <div className="success-message">
-            <div className="victory-text">🎉 You have won the game! 🎉</div>
+            <div className="victory-text">
+              {isNewRecord ? '🏆 NEW RECORD! 🏆' : '🎉 You have won the game! 🎉'}
+            </div>
             <h2
               style={{
                 color: '#61dafb',
@@ -422,6 +436,11 @@ export default function MazeGame({ onBackToLanding }: MazeGameProps) {
             <p style={{ fontSize: '1.2rem', color: '#fff' }}>
               You completed the maze in {moveCount} moves!
             </p>
+            {isNewRecord && (
+              <p style={{ fontSize: '1.1rem', color: '#ffd700', marginTop: '0.5rem' }}>
+                This is your best score!
+              </p>
+            )}
             <p
               style={{ fontSize: '1rem', color: '#8b949e', marginTop: '1rem' }}
             >
@@ -430,6 +449,7 @@ export default function MazeGame({ onBackToLanding }: MazeGameProps) {
           </div>
         </div>
       )}
+      
       <h1
         style={{
           fontSize: '2.5rem',
@@ -441,6 +461,15 @@ export default function MazeGame({ onBackToLanding }: MazeGameProps) {
       >
         EchoMaze
       </h1>
+
+      {/* Score Display */}
+      <ScoreDisplay
+        currentScore={moveCount}
+        bestScore={bestScore}
+        isNewRecord={isNewRecord && showSuccess}
+        gameType="maze"
+      />
+      
       <div
         style={{
           position: 'relative',
@@ -506,6 +535,7 @@ export default function MazeGame({ onBackToLanding }: MazeGameProps) {
           ))
         )}
       </div>
+      
       <div
         style={{
           display: 'flex',
@@ -531,13 +561,8 @@ export default function MazeGame({ onBackToLanding }: MazeGameProps) {
         >
           New Game
         </button>
-        <ScoreDisplay
-          currentScore={moveCount}
-          bestScore={bestScore}
-          isNewRecord={bestScore !== null && moveCount < bestScore && showSuccess}
-          gameType="tiles"
-        />
       </div>
+      
       <div
         style={{
           marginTop: '20px',
