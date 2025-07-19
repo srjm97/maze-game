@@ -34,15 +34,11 @@ export const TilesControls: React.FC<TilesControlsProps> = ({
           display: 'flex',
           gap: '20px',
           alignItems: 'center',
-          marginTop: '20px',
+          marginBottom: '20px',
           flexWrap: 'wrap',
           justifyContent: 'center',
         }}
       >
-        <GameButton onClick={onNewGame}>New Game</GameButton>
-        <GameButton onClick={onBackToMenu} variant="secondary">
-          Back to Menu
-        </GameButton>
         <GameStats moveCount={moveCount} />
         <div
           style={{
@@ -54,6 +50,7 @@ export const TilesControls: React.FC<TilesControlsProps> = ({
           Matches: {matchCount}/{totalPairs}
         </div>
       </div>
+          <GameButton onClick={onNewGame}>New Game</GameButton>
 
       <div
         style={{

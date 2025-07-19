@@ -8,6 +8,7 @@ import { TILES_CONFIG } from '../../constants/tilesConstants';
 import { addTilesScore, getBestTilesScore } from '../../utils/highScoreUtils';
 import '../../styles/animations.css';
 import { ScoreDisplay } from '../molecules/ScoreDisplay';
+import BackButton from '../atoms/BackButton';
 
 interface TilesGameProps {
   onBackToMenu: () => void;
@@ -163,6 +164,7 @@ export default function TilesGame({ onBackToMenu }: TilesGameProps) {
             : `You found all ${matchCount} pairs!`
         }
       />
+      <BackButton onClick={onBackToMenu} />
 
       <h1
         style={{

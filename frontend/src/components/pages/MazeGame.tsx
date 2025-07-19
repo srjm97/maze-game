@@ -12,6 +12,7 @@ import { messages } from '../../constants/messages';
 import { speakMessage } from '../../utils/speakmessage';
 import { ScoreDisplay } from '../molecules/ScoreDisplay';
 import { getBestMazeScore, addMazeScore } from '../../utils/highScoreUtils';
+import BackButton from '../atoms/BackButton';
 
 const API_BASE_URL =
   import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000';
@@ -390,31 +391,7 @@ export default function MazeGame({ onBackToLanding }: MazeGameProps) {
         `}
       </style>
 
-      {/* Back Button */}
-      <button
-        onClick={onBackToLanding}
-        style={{
-          position: 'absolute',
-          top: '20px',
-          left: '20px',
-          padding: '10px 15px',
-          fontSize: '1rem',
-          fontWeight: 'bold',
-          borderRadius: '8px',
-          background: 'rgba(255, 255, 255, 0.1)',
-          color: '#61dafb',
-          border: '2px solid #61dafb',
-          cursor: 'pointer',
-          transition: 'all 0.3s ease',
-          display: 'flex',
-          alignItems: 'center',
-          gap: '0.5rem',
-          backdropFilter: 'blur(10px)',
-        }}
-      >
-        <FontAwesomeIcon icon={faArrowLeft} />
-        Back to Games
-      </button>
+     <BackButton onClick={onBackToLanding} />
 
       {showSuccess && (
         <div className="success-overlay">
