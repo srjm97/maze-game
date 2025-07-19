@@ -81,11 +81,6 @@ export default function TilesGame({ onBackToMenu }: TilesGameProps) {
       setBestScore(getBestTilesScore(difficulty));
 
       playVictory();
-      const message = scoreResult.isNewRecord
-        ? `New record! You completed the memory game in ${moveCount} moves with ${matchCount} matches!`
-        : `Congratulations! You completed the memory game in ${moveCount} moves with ${matchCount} matches!`;
-      speakMessage(message);
-
       setShowSuccess(true);
       setTimeout(() => {
         setShowSuccess(false);
@@ -102,9 +97,6 @@ export default function TilesGame({ onBackToMenu }: TilesGameProps) {
     initializeGame();
     // Update best score for current difficulty
     setBestScore(getBestTilesScore(difficulty));
-    speakMessage(
-      `Memory tiles game started! ${difficulty.charAt(0).toUpperCase() + difficulty.slice(1)} difficulty. Find matching pairs by clicking tiles.`
-    );
   }, [initializeGame, difficulty]);
 
   const handleTileClickWithAudio = useCallback(
