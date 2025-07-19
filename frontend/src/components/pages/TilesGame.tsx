@@ -13,18 +13,18 @@ import { ScoreDisplay } from '../molecules/ScoreDisplay';
 interface TilesGameProps {
   onBackToMenu: () => void;
 }
-
+const BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000';
 export default function TilesGame({ onBackToMenu }: TilesGameProps) {
-  const { 
-    tiles, 
-    selectedTiles, 
-    moveCount, 
-    matchCount, 
-    gameWon, 
+  const {
+    tiles,
+    selectedTiles,
+    moveCount,
+    matchCount,
+    gameWon,
     difficulty,
-    initializeGame, 
+    initializeGame,
     handleTileClick,
-    setDifficulty 
+    setDifficulty,
   } = useTilesGame();
 
   const { playWallHit, playVictory } = useAudio();
@@ -42,8 +42,14 @@ export default function TilesGame({ onBackToMenu }: TilesGameProps) {
     const updateCellSize = () => {
       const maxWidth = window.innerWidth * 0.9; // 90% of viewport width
       const maxHeight = window.innerHeight * 0.8; // 80% of viewport height
-      const width = Math.min(maxWidth / gridDimensions.width, TILES_CONFIG.MAX_CELL_SIZE);
-      const height = Math.min(maxHeight / gridDimensions.height, TILES_CONFIG.MAX_CELL_SIZE);
+      const width = Math.min(
+        maxWidth / gridDimensions.width,
+        TILES_CONFIG.MAX_CELL_SIZE
+      );
+      const height = Math.min(
+        maxHeight / gridDimensions.height,
+        TILES_CONFIG.MAX_CELL_SIZE
+      );
       setCellSize(100);
     };
     window.addEventListener('resize', updateCellSize);
@@ -66,20 +72,20 @@ export default function TilesGame({ onBackToMenu }: TilesGameProps) {
   useEffect(() => {
     if (gameWon && !victoryTriggeredRef.current) {
       victoryTriggeredRef.current = true;
-      
+
       // Add score to high scores and check if it's a new record
       const scoreResult = addTilesScore(moveCount, difficulty);
       setIsNewRecord(scoreResult.isNewRecord);
-      
+
       // Update best score
       setBestScore(getBestTilesScore(difficulty));
-      
+
       playVictory();
-      const message = scoreResult.isNewRecord 
+      const message = scoreResult.isNewRecord
         ? `New record! You completed the memory game in ${moveCount} moves with ${matchCount} matches!`
         : `Congratulations! You completed the memory game in ${moveCount} moves with ${matchCount} matches!`;
       speakMessage(message);
-      
+
       setShowSuccess(true);
       setTimeout(() => {
         setShowSuccess(false);
@@ -96,22 +102,30 @@ export default function TilesGame({ onBackToMenu }: TilesGameProps) {
     initializeGame();
     // Update best score for current difficulty
     setBestScore(getBestTilesScore(difficulty));
-    speakMessage(`Memory tiles game started! ${difficulty.charAt(0).toUpperCase() + difficulty.slice(1)} difficulty. Find matching pairs by clicking tiles.`);
+    speakMessage(
+      `Memory tiles game started! ${difficulty.charAt(0).toUpperCase() + difficulty.slice(1)} difficulty. Find matching pairs by clicking tiles.`
+    );
   }, [initializeGame, difficulty]);
 
-  const handleTileClickWithAudio = useCallback((index: number) => {
-    const success = handleTileClick(index);
-    if (!success) {
-      playWallHit();
-    }
-  }, [handleTileClick, playWallHit]);
+  const handleTileClickWithAudio = useCallback(
+    (index: number) => {
+      const success = handleTileClick(index);
+      if (!success) {
+        playWallHit();
+      }
+    },
+    [handleTileClick, playWallHit]
+  );
 
-  const handleDifficultyChange = useCallback((newDifficulty: 'easy' | 'medium' | 'hard') => {
-    setDifficulty(newDifficulty);
-    setTimeout(() => {
-      startNewGame();
-    }, 100);
-  }, [setDifficulty, startNewGame]);
+  const handleDifficultyChange = useCallback(
+    (newDifficulty: 'easy' | 'medium' | 'hard') => {
+      setDifficulty(newDifficulty);
+      setTimeout(() => {
+        startNewGame();
+      }, 100);
+    },
+    [setDifficulty, startNewGame]
+  );
 
   // Keyboard controls
   useEffect(() => {
@@ -130,33 +144,41 @@ export default function TilesGame({ onBackToMenu }: TilesGameProps) {
   }, [startNewGame, onBackToMenu]);
 
   return (
-    <div style={{
-      minHeight: '100vh',
-      width: '100vw',
-      position: 'absolute',
-      left: '50%',
-      transform: 'translateX(-50%)',
-      display: 'flex',
-      flexDirection: 'column',
-      alignItems: 'center',
-      justifyContent: 'center',
-      backgroundColor: '#1a1b1e',
-      color: '#fff',
-      padding: '16px',
-    }}>
-      <VictoryModal 
-        isVisible={showSuccess} 
+    <div
+      style={{
+        minHeight: '100vh',
+        width: '100vw',
+        position: 'absolute',
+        left: '50%',
+        transform: 'translateX(-50%)',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundColor: '#1a1b1e',
+        color: '#fff',
+        padding: '16px',
+      }}
+    >
+      <VictoryModal
+        isVisible={showSuccess}
         moveCount={moveCount}
-        customMessage={isNewRecord ? `🏆 NEW RECORD! You found all ${matchCount} pairs! 🏆` : `You found all ${matchCount} pairs!`}
+        customMessage={
+          isNewRecord
+            ? `🏆 NEW RECORD! You found all ${matchCount} pairs! 🏆`
+            : `You found all ${matchCount} pairs!`
+        }
       />
-      
-      <h1 style={{
-        fontSize: '2.5rem',
-        marginBottom: '1rem',
-        color: '#ff6b6b',
-        fontWeight: 'bold',
-        textShadow: '0 0 15px rgba(255, 107, 107, 0.5)',
-      }}>
+
+      <h1
+        style={{
+          fontSize: '2.5rem',
+          marginBottom: '1rem',
+          color: '#ff6b6b',
+          fontWeight: 'bold',
+          textShadow: '0 0 15px rgba(255, 107, 107, 0.5)',
+        }}
+      >
         Memory Tiles
       </h1>
 

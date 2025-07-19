@@ -16,9 +16,15 @@ export const playWallHitSound = (audioContext: AudioContext | null): void => {
   const gainNode = audioContext.createGain();
 
   oscillator.type = 'square';
-  oscillator.frequency.setValueAtTime(AUDIO_CONFIG.WALL_HIT_FREQUENCY, audioContext.currentTime);
+  oscillator.frequency.setValueAtTime(
+    AUDIO_CONFIG.WALL_HIT_FREQUENCY,
+    audioContext.currentTime
+  );
   gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
-  gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + AUDIO_CONFIG.WALL_HIT_DURATION);
+  gainNode.gain.exponentialRampToValueAtTime(
+    0.01,
+    audioContext.currentTime + AUDIO_CONFIG.WALL_HIT_DURATION
+  );
 
   oscillator.connect(gainNode);
   gainNode.connect(audioContext.destination);
@@ -41,7 +47,10 @@ export const playVictoryMusic = (audioContext: AudioContext | null): void => {
 
     gainNode.gain.setValueAtTime(0, currentTime);
     gainNode.gain.linearRampToValueAtTime(0.2, currentTime + 0.05);
-    gainNode.gain.exponentialRampToValueAtTime(0.01, currentTime + note.duration);
+    gainNode.gain.exponentialRampToValueAtTime(
+      0.01,
+      currentTime + note.duration
+    );
 
     oscillator.connect(gainNode);
     gainNode.connect(audioContext.destination);
@@ -61,12 +70,14 @@ export const playBeaconSound = (
   if (!audioContext || !gameState) return;
 
   const maxDistance = Math.sqrt(
-    Math.pow(gameState.maze_layout[0].length, 2) + 
-    Math.pow(gameState.maze_layout.length, 2)
+    Math.pow(gameState.maze_layout[0].length, 2) +
+      Math.pow(gameState.maze_layout.length, 2)
   );
 
   const normalizedDistance = distance / maxDistance;
-  const frequency = AUDIO_CONFIG.BEACON_BASE_FREQUENCY + (1 - normalizedDistance) * AUDIO_CONFIG.BEACON_RANGE;
+  const frequency =
+    AUDIO_CONFIG.BEACON_BASE_FREQUENCY +
+    (1 - normalizedDistance) * AUDIO_CONFIG.BEACON_RANGE;
   const volume = 0.05 + (1 - normalizedDistance) * 0.15;
 
   const xDiff = gameState.goal_position.x - gameState.player_position.x;
@@ -79,7 +90,10 @@ export const playBeaconSound = (
   oscillator.type = 'sine';
   oscillator.frequency.setValueAtTime(frequency, audioContext.currentTime);
   gainNode.gain.setValueAtTime(volume, audioContext.currentTime);
-  gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.3);
+  gainNode.gain.exponentialRampToValueAtTime(
+    0.01,
+    audioContext.currentTime + 0.3
+  );
   panner.pan.setValueAtTime(panValue, audioContext.currentTime);
 
   oscillator.connect(gainNode);
