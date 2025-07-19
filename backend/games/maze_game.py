@@ -1,9 +1,7 @@
-from fastapi import FastAPI, HTTPException
-from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel
-import uvicorn
-from typing import List, Tuple, Optional
 import random
+from typing import List
+from pydantic import BaseModel
+
 
 class Position(BaseModel):
     x: int
@@ -14,6 +12,13 @@ class GameState(BaseModel):
     goal_position: Position
     maze_layout: List[List[int]]
     game_over: bool
+
+class GameConfig(BaseModel):
+    width: int = 10
+    height: int = 10
+
+class MoveRequest(BaseModel):
+    direction: str
 
 class MazeGame:
     def __init__(self, width: int, height: int):
@@ -107,62 +112,3 @@ class MazeGame:
             maze_layout=self.grid,
             game_over=self.game_over
         )
-
-# FastAPI application
-app = FastAPI(title="EchoMaze Backend")
-
-# Configure CORS
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["http://localhost:5173"],  # Vite's default port
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
-
-# Store active games
-games = {}
-
-class GameConfig(BaseModel):
-    width: int = 10
-    height: int = 10
-
-class MoveRequest(BaseModel):
-    direction: str
-
-@app.post("/game", response_model=str)
-async def create_game(config: GameConfig):
-    game_id = str(random.randint(1000, 9999))
-    games[game_id] = MazeGame(config.width, config.height)
-    return game_id
-
-@app.get("/game/{game_id}", response_model=GameState)
-async def get_game(game_id: str):
-    if game_id not in games:
-        raise HTTPException(status_code=404, detail="Game not found")
-    return games[game_id].get_game_state()
-
-@app.post("/game/{game_id}/move")
-async def move_player(game_id: str, move: MoveRequest):
-    if game_id not in games:
-        raise HTTPException(status_code=404, detail="Game not found")
-    
-    if move.direction not in ["up", "down", "left", "right"]:
-        raise HTTPException(status_code=400, detail="Invalid direction")
-    
-    game = games[game_id]
-    success = game.move_player(move.direction)
-    
-    if not success:
-        raise HTTPException(status_code=400, detail="Invalid move")
-    
-    return game.get_game_state()
-
-@app.get("/game/{game_id}/walls")
-async def get_nearby_walls(game_id: str):
-    if game_id not in games:
-        raise HTTPException(status_code=404, detail="Game not found")
-    return games[game_id].get_nearby_walls()
-
-if __name__ == "__main__":
-    uvicorn.run(app, host="0.0.0.0", port=8000)
