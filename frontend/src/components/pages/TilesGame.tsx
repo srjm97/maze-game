@@ -9,6 +9,7 @@ import { addTilesScore, getBestTilesScore } from '../../utils/highScoreUtils';
 import '../../styles/animations.css';
 import { ScoreDisplay } from '../molecules/ScoreDisplay';
 import BackButton from '../atoms/BackButton';
+import { VoiceCommand } from '../molecules/VoiceComponent';
 
 interface TilesGameProps {
   onBackToMenu: () => void;
@@ -28,7 +29,7 @@ export default function TilesGame({ onBackToMenu }: TilesGameProps) {
   } = useTilesGame();
 
   const { playWallHit, playVictory } = useAudio();
-  const [cellSize, setCellSize] = useState(TILES_CONFIG.MIN_CELL_SIZE);
+  const [cellSize, setCellSize] = useState<number>(TILES_CONFIG.MIN_CELL_SIZE);
   const [showSuccess, setShowSuccess] = useState(false);
   const [bestScore, setBestScore] = useState<number | null>(null);
   const [isNewRecord, setIsNewRecord] = useState(false);
@@ -199,6 +200,12 @@ export default function TilesGame({ onBackToMenu }: TilesGameProps) {
         totalPairs={totalPairs}
         difficulty={difficulty}
         onDifficultyChange={handleDifficultyChange}
+      />
+
+      <VoiceCommand
+      tiles = {tiles}
+      difficulty = {difficulty}
+      handleTileClick =  {handleTileClick}
       />
     </div>
   );

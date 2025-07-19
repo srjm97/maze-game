@@ -10,7 +10,8 @@ class Settings:
     DATABASE_NAME = config("DATABASE_NAME", default="fastapi_auth")
     BACKEND_BASE_URL = config("BACKEND_BASE_URL", default="http://localhost:8000")
     FRONTEND_BASE_URL = config("FRONTEND_BASE_URL", default="http://localhost:5173")
-
+    ELEVEN_LABS_KEY = config("ELEVEN_LABS_KEY")
+    
 settings = Settings()
 
 

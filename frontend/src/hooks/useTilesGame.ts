@@ -30,10 +30,12 @@ export const useTilesGame = () => {
 
       for (let i = 0; i < pairs; i++) {
         const color = TILE_COLORS[i % TILE_COLORS.length];
-        const symbol = TILE_SYMBOLS[i % TILE_SYMBOLS.length];
+        const symbolData = TILE_SYMBOLS[i % TILE_SYMBOLS.length];
+        const symbol = symbolData.symbol;
+        const symbolName = symbolData.name;
         newTiles.push(
-          { color, symbol, isRevealed: false, isMatched: false, pairId: i },
-          { color, symbol, isRevealed: false, isMatched: false, pairId: i }
+          { color, symbol, symbolName, isRevealed: false, isMatched: false, pairId: i },
+          { color, symbol, symbolName, isRevealed: false, isMatched: false, pairId: i }
         );
       }
 

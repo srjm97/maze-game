@@ -1,12 +1,13 @@
 from datetime import datetime
 import logging
 from bson import ObjectId
-from fastapi import Depends, FastAPI, HTTPException, Query, Request
+from fastapi import Depends, FastAPI, File, HTTPException, Query, Request, UploadFile
 from fastapi.concurrency import asynccontextmanager
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import RedirectResponse
 import uvicorn
 import random
+from elevenlabs import ElevenLabs
 
 from auth import GoogleAuth, create_access_token, get_current_user
 from database import close_mongo_connection, connect_to_mongo, get_database
@@ -205,6 +206,19 @@ async def get_top_10_scores(
             "score": score_doc["score"]
         })
     return {"game_name": game_name, "top_10_scores": top_scores}
+
+@app.post("/audio")
+async def handle_audio(file: UploadFile = File(...)):
+    client = ElevenLabs(api_key=settings.ELEVEN_LABS_KEY)
+    
+    # Save the uploaded file to memory
+    contents = await file.read()
+    
+    response = client.speech_to_text.convert(
+        model_id="scribe_v1",
+        file=contents,
+    )
+    return response
 
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=8000)
