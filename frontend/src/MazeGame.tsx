@@ -3,6 +3,8 @@ import axios from 'axios';
 import { Grid } from '@mantine/core';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUser, faStar, faCube } from '@fortawesome/free-solid-svg-icons';
+import { messages } from './constants/messages';
+import { speakMessage } from './utils/speakmessage';
 
 // Cell size will be dynamic based on screen size
 const MIN_CELL_SIZE = 25;
@@ -87,29 +89,6 @@ export default function MazeGame() {
     });
   };
 
-  // Text-to-speech victory announcement
-  const speakVictoryMessage = () => {
-    if ('speechSynthesis' in window) {
-      const utterance = new SpeechSynthesisUtterance("You have won the game!");
-      utterance.rate = 0.9;
-      utterance.pitch = 1.2;
-      utterance.volume = 0.8;
-      
-      // Try to use a more enthusiastic voice if available
-      const voices = speechSynthesis.getVoices();
-      const preferredVoice = voices.find(voice => 
-        voice.name.includes('Google') || 
-        voice.name.includes('Microsoft') ||
-        voice.lang.startsWith('en')
-      );
-      
-      if (preferredVoice) {
-        utterance.voice = preferredVoice;
-      }
-      
-      speechSynthesis.speak(utterance);
-    }
-  };
 
   // Create beacon sound that changes with distance to goal
   const playBeaconSound = (distance: number) => {
@@ -186,6 +165,8 @@ export default function MazeGame() {
       });
       setGameId(response.data);
       await fetchGameState(response.data);
+      speakMessage(`${messages.startGame},${messages.instructions}`);
+
     } catch (error) {
       console.error('Error starting new game:', error);
     } finally {
@@ -222,7 +203,7 @@ export default function MazeGame() {
       if (response.data.game_over) {
         // Play victory music, speak victory message, and show success message
         playVictoryMusic();
-        speakVictoryMessage();
+        speakMessage(messages.victory)
         setShowSuccess(true);
         setTimeout(() => {
           setShowSuccess(false);
