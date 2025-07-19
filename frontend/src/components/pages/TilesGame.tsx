@@ -13,7 +13,7 @@ import { ScoreDisplay } from '../molecules/ScoreDisplay';
 interface TilesGameProps {
   onBackToMenu: () => void;
 }
-
+const BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000';
 export default function TilesGame({ onBackToMenu }: TilesGameProps) {
   const { 
     tiles, 
