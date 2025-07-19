@@ -1,14 +1,47 @@
-import React, { useState } from 'react';
-
-import LandingPage from './LandingPage';
+import React, { useState, useEffect } from 'react';
 import { MantineProvider } from '@mantine/core';
+
+import LoginComponent from './components/molecules/LoginComponent';
+import LandingPage from './LandingPage';
 import MazeGame from './components/pages/MazeGame';
 import TilesGame from './components/pages/TilesGame';
 
 type GameType = 'maze' | 'tiles' | null;
 
+interface User {
+  id: string;
+  email: string;
+  name: string;
+  picture?: string;
+  created_at: string;
+}
+
 function App() {
   const [currentGame, setCurrentGame] = useState<GameType>(null);
+  const [user, setUser] = useState<User | null>(null);
+
+  // On mount, check for logged in user
+  useEffect(() => {
+    const storedUser = sessionStorage.getItem('user_data');
+    if (storedUser) {
+      try {
+        setUser(JSON.parse(storedUser));
+      } catch {
+        sessionStorage.removeItem('user_data');
+      }
+    }
+  }, []);
+
+  const handleLogin = (userData: User) => {
+    setUser(userData);
+  };
+
+  const handleLogout = () => {
+    setUser(null);
+    setCurrentGame(null);
+    sessionStorage.removeItem('user_data');
+    sessionStorage.removeItem('access_token');
+  };
 
   const handleGameSelect = (gameType: GameType) => {
     setCurrentGame(gameType);
@@ -24,28 +57,24 @@ function App() {
         style={{
           minHeight: '100vh',
           background: '#1a1b1e',
+          position: 'relative',
         }}
       >
-        {currentGame === 'maze' ? (
-          <div
-            style={{
-              animation: 'fadeIn 0.5s ease',
-            }}
-          >
+        {!user ? (
+          <LoginComponent onLogin={handleLogin} onLogout={handleLogout} />
+        ) : currentGame === 'maze' ? (
+          <div style={{ animation: 'fadeIn 0.5s ease' }}>
             <MazeGame onBackToLanding={handleBackToMenu} />
           </div>
         ) : currentGame === 'tiles' ? (
-          <div
-            style={{
-              animation: 'fadeIn 0.5s ease',
-            }}
-          >
+          <div style={{ animation: 'fadeIn 0.5s ease' }}>
             <TilesGame onBackToMenu={handleBackToMenu} />
           </div>
         ) : (
           <LandingPage onGameSelect={handleGameSelect} />
         )}
       </div>
+
       <style>
         {`
           @keyframes fadeIn {

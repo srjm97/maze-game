@@ -297,9 +297,6 @@ export default function MazeGame({ onBackToLanding }: MazeGameProps) {
       style={{
         minHeight: '100vh',
         width: '100vw',
-        position: 'absolute',
-        left: '50%',
-        transform: 'translateX(-50%)',
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',

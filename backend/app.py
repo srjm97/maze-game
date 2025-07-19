@@ -4,6 +4,7 @@ from bson import ObjectId
 from fastapi import Depends, FastAPI, HTTPException, Query
 from fastapi.concurrency import asynccontextmanager
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import RedirectResponse
 import uvicorn
 import random
 
@@ -99,13 +100,8 @@ async def google_callback(
             name=user["name"],
             picture=user.get("picture"),
             created_at=user["created_at"]
-        )
-        
-        return Token(
-            access_token=access_token,
-            token_type="bearer",
-            user=user_response
-        )
+        )   
+        return RedirectResponse(url=f"http://localhost:5173/?token={access_token}")
         
     except Exception as e:
         logger.error(f"Google callback error: {e}")
