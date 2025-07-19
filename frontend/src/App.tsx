@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import MazeGame from './MazeGame';
+
 import LandingPage from './LandingPage';
 import { MantineProvider } from '@mantine/core';
+import MazeGame from './components/pages/MazeGame';
 
 function App() {
   const [showGame, setShowGame] = useState(false);
