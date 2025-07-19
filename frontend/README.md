@@ -1,6 +1,4 @@
-Here’s a **README.md** template for your project with clear steps to run it locally:
 
----
 
 # **EchoMaze - React Game**
 
@@ -129,6 +127,4 @@ Ensure your backend (API) is running on the URL provided in `.env`.
 * **Mantine UI**
 * **FontAwesome Icons**
 
----
 
-### **Would you like me to create this `README.md` file and add a preconfigured `.env.example` file for your project structure?**
