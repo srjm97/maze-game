@@ -6,7 +6,9 @@ import { useTilesGame } from '../../hooks/useTilesGame';
 import { useAudio } from '../../hooks/useAudio';
 import { TILES_CONFIG } from '../../constants/tilesConstants';
 import { speakMessage } from '../../utils/speakmessage';
+import { addTilesScore, getBestTilesScore } from '../../utils/highScoreUtils';
 import '../../styles/animations.css';
+import { ScoreDisplay } from '../molecules/ScoreDisplay';
 
 interface TilesGameProps {
   onBackToMenu: () => void;
@@ -28,6 +30,8 @@ export default function TilesGame({ onBackToMenu }: TilesGameProps) {
   const { playWallHit, playVictory } = useAudio();
   const [cellSize, setCellSize] = useState(TILES_CONFIG.MIN_CELL_SIZE);
   const [showSuccess, setShowSuccess] = useState(false);
+  const [bestScore, setBestScore] = useState<number | null>(null);
+  const [isNewRecord, setIsNewRecord] = useState(false);
   const victoryTriggeredRef = useRef(false);
 
   const gridDimensions = TILES_CONFIG.DIFFICULTIES[difficulty];
@@ -49,26 +53,49 @@ export default function TilesGame({ onBackToMenu }: TilesGameProps) {
   // Initialize game on component mount
   useEffect(() => {
     startNewGame();
+    // Load best score for current difficulty
+    setBestScore(getBestTilesScore(difficulty));
   }, []);
+
+  // Update best score when difficulty changes
+  useEffect(() => {
+    setBestScore(getBestTilesScore(difficulty));
+  }, [difficulty]);
 
   // Handle game won - fixed to prevent infinite loop
   useEffect(() => {
     if (gameWon && !victoryTriggeredRef.current) {
       victoryTriggeredRef.current = true;
+      
+      // Add score to high scores and check if it's a new record
+      const scoreResult = addTilesScore(moveCount, difficulty);
+      setIsNewRecord(scoreResult.isNewRecord);
+      
+      // Update best score
+      setBestScore(getBestTilesScore(difficulty));
+      
       playVictory();
-      speakMessage(`Congratulations! You completed the memory game in ${moveCount} moves with ${matchCount} matches!`);
+      const message = scoreResult.isNewRecord 
+        ? `New record! You completed the memory game in ${moveCount} moves with ${matchCount} matches!`
+        : `Congratulations! You completed the memory game in ${moveCount} moves with ${matchCount} matches!`;
+      speakMessage(message);
+      
       setShowSuccess(true);
       setTimeout(() => {
         setShowSuccess(false);
+        setIsNewRecord(false);
       }, TILES_CONFIG.VICTORY_DELAY);
     }
-  }, [gameWon, moveCount, matchCount, playVictory]);
+  }, [gameWon, moveCount, matchCount, difficulty, playVictory]);
 
   const startNewGame = useCallback(() => {
     // Reset the victory flag when starting a new game
     victoryTriggeredRef.current = false;
     setShowSuccess(false);
+    setIsNewRecord(false);
     initializeGame();
+    // Update best score for current difficulty
+    setBestScore(getBestTilesScore(difficulty));
     speakMessage(`Memory tiles game started! ${difficulty.charAt(0).toUpperCase() + difficulty.slice(1)} difficulty. Find matching pairs by clicking tiles.`);
   }, [initializeGame, difficulty]);
 
@@ -120,7 +147,7 @@ export default function TilesGame({ onBackToMenu }: TilesGameProps) {
       <VictoryModal 
         isVisible={showSuccess} 
         moveCount={moveCount}
-        customMessage={`You found all ${matchCount} pairs!`}
+        customMessage={isNewRecord ? `🏆 NEW RECORD! You found all ${matchCount} pairs! 🏆` : `You found all ${matchCount} pairs!`}
       />
       
       <h1 style={{
@@ -132,6 +159,14 @@ export default function TilesGame({ onBackToMenu }: TilesGameProps) {
       }}>
         Memory Tiles
       </h1>
+
+      <ScoreDisplay
+        currentScore={moveCount}
+        bestScore={bestScore}
+        isNewRecord={isNewRecord && gameWon}
+        gameType="tiles"
+        difficulty={difficulty}
+      />
 
       <TilesGrid
         tiles={tiles}
