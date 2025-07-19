@@ -50,6 +50,67 @@ export default function MazeGame() {
     oscillator.stop(audioContext.currentTime + 0.2);
   };
 
+  // Create victory music - a simple celebratory melody
+  const playVictoryMusic = () => {
+    if (!audioContext) return;
+    
+    // Victory melody notes (frequencies in Hz)
+    const melody = [
+      { freq: 523, duration: 0.3 }, // C5
+      { freq: 659, duration: 0.3 }, // E5
+      { freq: 784, duration: 0.3 }, // G5
+      { freq: 1047, duration: 0.6 }, // C6
+      { freq: 784, duration: 0.3 }, // G5
+      { freq: 1047, duration: 0.8 }, // C6 (longer)
+    ];
+    
+    let currentTime = audioContext.currentTime + 0.1;
+    
+    melody.forEach((note) => {
+      const oscillator = audioContext.createOscillator();
+      const gainNode = audioContext.createGain();
+      
+      oscillator.type = 'sine';
+      oscillator.frequency.setValueAtTime(note.freq, currentTime);
+      
+      gainNode.gain.setValueAtTime(0, currentTime);
+      gainNode.gain.linearRampToValueAtTime(0.2, currentTime + 0.05);
+      gainNode.gain.exponentialRampToValueAtTime(0.01, currentTime + note.duration);
+      
+      oscillator.connect(gainNode);
+      gainNode.connect(audioContext.destination);
+      
+      oscillator.start(currentTime);
+      oscillator.stop(currentTime + note.duration);
+      
+      currentTime += note.duration;
+    });
+  };
+
+  // Text-to-speech victory announcement
+  const speakVictoryMessage = () => {
+    if ('speechSynthesis' in window) {
+      const utterance = new SpeechSynthesisUtterance("You have won the game!");
+      utterance.rate = 0.9;
+      utterance.pitch = 1.2;
+      utterance.volume = 0.8;
+      
+      // Try to use a more enthusiastic voice if available
+      const voices = speechSynthesis.getVoices();
+      const preferredVoice = voices.find(voice => 
+        voice.name.includes('Google') || 
+        voice.name.includes('Microsoft') ||
+        voice.lang.startsWith('en')
+      );
+      
+      if (preferredVoice) {
+        utterance.voice = preferredVoice;
+      }
+      
+      speechSynthesis.speak(utterance);
+    }
+  };
+
   // Create beacon sound that changes with distance to goal
   const playBeaconSound = (distance: number) => {
     if (!audioContext || !gameState) return;
@@ -118,6 +179,7 @@ export default function MazeGame() {
   const startNewGame = async () => {
     try {
       setLoading(true);
+      setMoveCount(0); // Reset move count for new game
       const response = await axios.post('http://localhost:8000/game', {
         width: 15,
         height: 15
@@ -156,19 +218,23 @@ export default function MazeGame() {
 
       setGameState(response.data);
       setMoveCount(prev => prev + 1);
-      // Calculate distance to goal and play beacon sound
-      const distance = Math.sqrt(
-        Math.pow(response.data.player_position.x - response.data.goal_position.x, 2) +
-        Math.pow(response.data.player_position.y - response.data.goal_position.y, 2)
-      );
-      playBeaconSound(distance);
       
       if (response.data.game_over) {
+        // Play victory music, speak victory message, and show success message
+        playVictoryMusic();
+        speakVictoryMessage();
         setShowSuccess(true);
         setTimeout(() => {
           setShowSuccess(false);
           startNewGame();
-        }, 2000);
+        }, 4000); // Extended to 4 seconds to let the voice and music complete
+      } else {
+        // Calculate distance to goal and play beacon sound
+        const distance = Math.sqrt(
+          Math.pow(response.data.player_position.x - response.data.goal_position.x, 2) +
+          Math.pow(response.data.player_position.y - response.data.goal_position.y, 2)
+        );
+        playBeaconSound(distance);
       }
     } catch (error) {
       console.error('Error moving player:', error);
@@ -250,6 +316,10 @@ export default function MazeGame() {
             75% { transform: scale(1.2) rotate(5deg); }
             100% { transform: scale(1) rotate(0deg); }
           }
+          @keyframes sparkle {
+            0%, 100% { opacity: 0; transform: scale(0); }
+            50% { opacity: 1; transform: scale(1); }
+          }
           .success-overlay {
             position: fixed;
             top: 0;
@@ -264,11 +334,24 @@ export default function MazeGame() {
             animation: fadeIn 0.3s ease;
           }
           .success-message {
-            background: #2c5282;
-            padding: 2rem;
-            border-radius: 10px;
+            background: linear-gradient(135deg, #2c5282 0%, #61dafb 100%);
+            padding: 3rem;
+            border-radius: 15px;
             text-align: center;
             animation: celebrate 0.5s ease;
+            box-shadow: 0 0 30px rgba(97, 218, 251, 0.5);
+            border: 2px solid #61dafb;
+          }
+          .victory-text {
+            font-size: 2.5rem;
+            font-weight: bold;
+            background: linear-gradient(45deg, #ffd700, #ffed4e, #ffd700);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+            animation: sparkle 2s ease-in-out infinite;
+            margin-bottom: 1rem;
           }
         `}
       </style>
@@ -276,10 +359,18 @@ export default function MazeGame() {
       {showSuccess && (
         <div className="success-overlay">
           <div className="success-message">
-            <h2 style={{ color: '#61dafb', marginBottom: '1rem' }}>
+            <div className="victory-text">
+              🎉 You have won the game! 🎉
+            </div>
+            <h2 style={{ color: '#61dafb', marginBottom: '1rem', fontSize: '1.8rem' }}>
               Congratulations!
             </h2>
-            <p>You completed the maze in {moveCount} moves!</p>
+            <p style={{ fontSize: '1.2rem', color: '#fff' }}>
+              You completed the maze in {moveCount} moves!
+            </p>
+            <p style={{ fontSize: '1rem', color: '#8b949e', marginTop: '1rem' }}>
+              Starting a new game in a moment...
+            </p>
           </div>
         </div>
       )}
@@ -340,6 +431,7 @@ export default function MazeGame() {
       <div style={{
         display: 'flex',
         gap: '20px',
+        alignItems: 'center',
         marginTop: '20px'
       }}>
         <button
@@ -359,6 +451,13 @@ export default function MazeGame() {
         >
           New Game
         </button>
+        <div style={{
+          fontSize: '1.1rem',
+          color: '#61dafb',
+          fontWeight: 'bold'
+        }}>
+          Moves: {moveCount}
+        </div>
       </div>
       <div style={{
         marginTop: '20px',
