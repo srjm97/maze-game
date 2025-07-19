@@ -8,6 +8,8 @@ class Settings:
     JWT_EXPIRATION_TIME = 3600  # 1 hour
     MONGODB_URL = config("MONGODB_URL", default="mongodb://localhost:27017")
     DATABASE_NAME = config("DATABASE_NAME", default="fastapi_auth")
+    BACKEND_BASE_URL = config("BACKEND_BASE_URL", default="http://localhost:8000")
+    FRONTEND_BASE_URL = config("FRONTEND_BASE_URL", default="http://localhost:5137")
 
 settings = Settings()
 

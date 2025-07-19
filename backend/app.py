@@ -41,7 +41,7 @@ async def google_login():
     google_auth_url = (
         f"https://accounts.google.com/o/oauth2/auth?"
         f"client_id={settings.GOOGLE_CLIENT_ID}&"
-        f"redirect_uri=http://localhost:8000/auth/google/callback&"
+        f"redirect_uri={settings.BACKEND_BASE_URL}/auth/google/callback&"
         f"scope=openid email profile&"
         f"response_type=code&"
         f"access_type=offline"
@@ -57,7 +57,7 @@ async def google_callback(
     try:
         # Exchange code for token
         token_data = await GoogleAuth.exchange_code_for_token(
-            code, "http://localhost:8000/auth/google/callback"
+            code, f"{settings.BACKEND_BASE_URL}/auth/google/callback"
         )
         
         # Get user info from Google
@@ -101,7 +101,7 @@ async def google_callback(
             picture=user.get("picture"),
             created_at=user["created_at"]
         )   
-        return RedirectResponse(url=f"http://localhost:5173/?token={access_token}")
+        return RedirectResponse(url=f"{settings.FRONTEND_BASE_URL}/?token={access_token}")
         
     except Exception as e:
         logger.error(f"Google callback error: {e}")
