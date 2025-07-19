@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { TilesGrid } from '../molecules/TilesGrid';
 import { TilesControls } from '../molecules/TilesControls';
 import { VictoryModal } from '../molecules/VictoryModal';
@@ -28,6 +28,7 @@ export default function TilesGame({ onBackToMenu }: TilesGameProps) {
   const { playWallHit, playVictory } = useAudio();
   const [cellSize, setCellSize] = useState(TILES_CONFIG.MIN_CELL_SIZE);
   const [showSuccess, setShowSuccess] = useState(false);
+  const victoryTriggeredRef = useRef(false);
 
   const gridDimensions = TILES_CONFIG.DIFFICULTIES[difficulty];
   const totalPairs = (gridDimensions.width * gridDimensions.height) / 2;
@@ -50,9 +51,10 @@ export default function TilesGame({ onBackToMenu }: TilesGameProps) {
     startNewGame();
   }, []);
 
-  // Handle game won
+  // Handle game won - fixed to prevent infinite loop
   useEffect(() => {
-    if (gameWon && !showSuccess) {
+    if (gameWon && !victoryTriggeredRef.current) {
+      victoryTriggeredRef.current = true;
       playVictory();
       speakMessage(`Congratulations! You completed the memory game in ${moveCount} moves with ${matchCount} matches!`);
       setShowSuccess(true);
@@ -60,9 +62,12 @@ export default function TilesGame({ onBackToMenu }: TilesGameProps) {
         setShowSuccess(false);
       }, TILES_CONFIG.VICTORY_DELAY);
     }
-  }, [gameWon, moveCount, matchCount, playVictory, showSuccess]);
+  }, [gameWon, moveCount, matchCount, playVictory]);
 
   const startNewGame = useCallback(() => {
+    // Reset the victory flag when starting a new game
+    victoryTriggeredRef.current = false;
+    setShowSuccess(false);
     initializeGame();
     speakMessage(`Memory tiles game started! ${difficulty.charAt(0).toUpperCase() + difficulty.slice(1)} difficulty. Find matching pairs by clicking tiles.`);
   }, [initializeGame, difficulty]);
