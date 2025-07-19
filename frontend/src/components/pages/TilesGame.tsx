@@ -63,10 +63,15 @@ export default function TilesGame({ onBackToMenu }: TilesGameProps) {
     setBestScore(getBestTilesScore(difficulty));
   }, []);
 
-  // Update best score when difficulty changes
+  // Update best score when difficulty changes and restart game
   useEffect(() => {
     setBestScore(getBestTilesScore(difficulty));
-  }, [difficulty]);
+    // Reset victory flag and restart game when difficulty changes
+    victoryTriggeredRef.current = false;
+    setShowSuccess(false);
+    setIsNewRecord(false);
+    initializeGame();
+  }, [difficulty, initializeGame]);
 
   // Handle game won - fixed to prevent infinite loop
   useEffect(() => {
@@ -112,11 +117,9 @@ export default function TilesGame({ onBackToMenu }: TilesGameProps) {
   const handleDifficultyChange = useCallback(
     (newDifficulty: 'easy' | 'medium' | 'hard') => {
       setDifficulty(newDifficulty);
-      setTimeout(() => {
-        startNewGame();
-      }, 100);
+      // The game will restart automatically via the useEffect above
     },
-    [setDifficulty, startNewGame]
+    [setDifficulty]
   );
 
   // Keyboard controls
