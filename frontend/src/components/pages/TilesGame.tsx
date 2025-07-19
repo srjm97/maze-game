@@ -5,10 +5,10 @@ import { VictoryModal } from '../molecules/VictoryModal';
 import { useTilesGame } from '../../hooks/useTilesGame';
 import { useAudio } from '../../hooks/useAudio';
 import { TILES_CONFIG } from '../../constants/tilesConstants';
-import { speakMessage } from '../../utils/speakmessage';
 import { addTilesScore, getBestTilesScore } from '../../utils/highScoreUtils';
 import '../../styles/animations.css';
 import { ScoreDisplay } from '../molecules/ScoreDisplay';
+import BackButton from '../atoms/BackButton';
 
 interface TilesGameProps {
   onBackToMenu: () => void;
@@ -63,10 +63,15 @@ export default function TilesGame({ onBackToMenu }: TilesGameProps) {
     setBestScore(getBestTilesScore(difficulty));
   }, []);
 
-  // Update best score when difficulty changes
+  // Update best score when difficulty changes and restart game
   useEffect(() => {
     setBestScore(getBestTilesScore(difficulty));
-  }, [difficulty]);
+    // Reset victory flag and restart game when difficulty changes
+    victoryTriggeredRef.current = false;
+    setShowSuccess(false);
+    setIsNewRecord(false);
+    initializeGame();
+  }, [difficulty, initializeGame]);
 
   // Handle game won - fixed to prevent infinite loop
   useEffect(() => {
@@ -81,11 +86,6 @@ export default function TilesGame({ onBackToMenu }: TilesGameProps) {
       setBestScore(getBestTilesScore(difficulty));
 
       playVictory();
-      const message = scoreResult.isNewRecord
-        ? `New record! You completed the memory game in ${moveCount} moves with ${matchCount} matches!`
-        : `Congratulations! You completed the memory game in ${moveCount} moves with ${matchCount} matches!`;
-      speakMessage(message);
-
       setShowSuccess(true);
       setTimeout(() => {
         setShowSuccess(false);
@@ -102,9 +102,6 @@ export default function TilesGame({ onBackToMenu }: TilesGameProps) {
     initializeGame();
     // Update best score for current difficulty
     setBestScore(getBestTilesScore(difficulty));
-    speakMessage(
-      `Memory tiles game started! ${difficulty.charAt(0).toUpperCase() + difficulty.slice(1)} difficulty. Find matching pairs by clicking tiles.`
-    );
   }, [initializeGame, difficulty]);
 
   const handleTileClickWithAudio = useCallback(
@@ -120,11 +117,9 @@ export default function TilesGame({ onBackToMenu }: TilesGameProps) {
   const handleDifficultyChange = useCallback(
     (newDifficulty: 'easy' | 'medium' | 'hard') => {
       setDifficulty(newDifficulty);
-      setTimeout(() => {
-        startNewGame();
-      }, 100);
+      // The game will restart automatically via the useEffect above
     },
-    [setDifficulty, startNewGame]
+    [setDifficulty]
   );
 
   // Keyboard controls
@@ -166,6 +161,7 @@ export default function TilesGame({ onBackToMenu }: TilesGameProps) {
             : `You found all ${matchCount} pairs!`
         }
       />
+      <BackButton onClick={onBackToMenu} />
 
       <h1
         style={{

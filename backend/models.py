@@ -22,3 +22,9 @@ class Token(BaseModel):
     access_token: str
     token_type: str
     user: UserResponse
+
+class Scores(BaseModel):
+    user_email:EmailStr
+    game_name: str
+    score: int
+    created_at: datetime = Field(default_factory=datetime.now)

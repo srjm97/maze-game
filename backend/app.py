@@ -1,7 +1,7 @@
 from datetime import datetime
 import logging
 from bson import ObjectId
-from fastapi import Depends, FastAPI, HTTPException, Query
+from fastapi import Depends, FastAPI, HTTPException, Query, Request
 from fastapi.concurrency import asynccontextmanager
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import RedirectResponse
@@ -159,5 +159,36 @@ async def get_nearby_walls(game_id: str):
         raise HTTPException(status_code=404, detail="Game not found")
     return games[game_id].get_nearby_walls()
 
+@app.get("/score/highest")
+async def get_highest_score(
+    user_email: str = Query(...),
+    game_name: str = Query(...),
+    db = Depends(get_database)
+):
+    """Get the highest score for a user in a specific game"""
+    score_doc = await db.scores.find_one(
+        {"user_email": user_email, "game_name": game_name},
+        sort=[("score", -1)]
+    )
+    if not score_doc:
+        raise HTTPException(status_code=404, detail="Score not found")
+    return {"user_email": score_doc["user_email"], "game_name": score_doc["game_name"], "highest_score": score_doc["score"]}
+
+@app.get("/score/top10")
+async def get_top_10_scores(
+    game_name: str = Query(...),
+    db = Depends(get_database)
+):
+    """Get top 10 scores for a specific game across all users"""
+    cursor = db.scores.find({"game_name": game_name}).sort("score", -1).limit(10)
+    top_scores = []
+    async for score_doc in cursor:
+        top_scores.append({
+            "user_email": score_doc["user_email"],
+            "score": score_doc["score"]
+        })
+    return {"game_name": game_name, "top_10_scores": top_scores}
+
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=8000)
+
