@@ -20,20 +20,26 @@ function App() {
 
   return (
     <MantineProvider>
-      <div style={{
-        minHeight: '100vh',
-        background: '#1a1b1e'
-      }}>
+      <div
+        style={{
+          minHeight: '100vh',
+          background: '#1a1b1e',
+        }}
+      >
         {currentGame === 'maze' ? (
-          <div style={{
-            animation: 'fadeIn 0.5s ease'
-          }}>
+          <div
+            style={{
+              animation: 'fadeIn 0.5s ease',
+            }}
+          >
             <MazeGame onBackToLanding={handleBackToMenu} />
           </div>
         ) : currentGame === 'tiles' ? (
-          <div style={{
-            animation: 'fadeIn 0.5s ease'
-          }}>
+          <div
+            style={{
+              animation: 'fadeIn 0.5s ease',
+            }}
+          >
             <TilesGame onBackToMenu={handleBackToMenu} />
           </div>
         ) : (

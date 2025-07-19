@@ -23,16 +23,19 @@ export const useGameState = () => {
     }
   }, []);
 
-  const movePlayer = useCallback(async (direction: string): Promise<GameState | null> => {
-    if (!gameId || gameState?.game_over) return null;
+  const movePlayer = useCallback(
+    async (direction: string): Promise<GameState | null> => {
+      if (!gameId || gameState?.game_over) return null;
 
-    const newGameState = await gameApi.movePlayer(gameId, direction);
-    if (newGameState) {
-      setGameState(newGameState);
-      setMoveCount(prev => prev + 1);
-    }
-    return newGameState;
-  }, [gameId, gameState]);
+      const newGameState = await gameApi.movePlayer(gameId, direction);
+      if (newGameState) {
+        setGameState(newGameState);
+        setMoveCount((prev) => prev + 1);
+      }
+      return newGameState;
+    },
+    [gameId, gameState]
+  );
 
   return {
     gameId,

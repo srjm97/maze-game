@@ -8,7 +8,12 @@ interface UseKeyboardControlsProps {
   gameOver: boolean;
 }
 
-export const useKeyboardControls = ({ onMove, onRestart, gameId, gameOver }: UseKeyboardControlsProps) => {
+export const useKeyboardControls = ({
+  onMove,
+  onRestart,
+  gameId,
+  gameOver,
+}: UseKeyboardControlsProps) => {
   useEffect(() => {
     const handleKeyPress = (event: KeyboardEvent) => {
       event.preventDefault();

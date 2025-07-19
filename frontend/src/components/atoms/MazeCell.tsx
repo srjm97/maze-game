@@ -25,29 +25,29 @@ export const MazeCell: React.FC<MazeCellProps> = ({ cellType, size }) => {
     switch (cellType) {
       case 'player':
         return (
-          <FontAwesomeIcon 
-            icon={faUser} 
-            color="#61dafb" 
-            style={{ filter: 'drop-shadow(0 0 5px rgba(97, 218, 251, 0.5))' }} 
+          <FontAwesomeIcon
+            icon={faUser}
+            color="#61dafb"
+            style={{ filter: 'drop-shadow(0 0 5px rgba(97, 218, 251, 0.5))' }}
           />
         );
       case 'goal':
         return (
-          <FontAwesomeIcon 
-            icon={faStar} 
-            color="#ffd700" 
-            style={{ filter: 'drop-shadow(0 0 5px rgba(255, 215, 0, 0.5))' }} 
+          <FontAwesomeIcon
+            icon={faStar}
+            color="#ffd700"
+            style={{ filter: 'drop-shadow(0 0 5px rgba(255, 215, 0, 0.5))' }}
           />
         );
       case 'wall':
         return (
-          <FontAwesomeIcon 
-            icon={faCube} 
-            color="#6b7280" 
-            style={{ 
+          <FontAwesomeIcon
+            icon={faCube}
+            color="#6b7280"
+            style={{
               opacity: 1,
-              filter: 'drop-shadow(0 0 3px rgba(107, 114, 128, 0.5))'
-            }} 
+              filter: 'drop-shadow(0 0 3px rgba(107, 114, 128, 0.5))',
+            }}
           />
         );
       default:

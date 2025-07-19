@@ -6,19 +6,20 @@ interface GameButtonProps {
   variant?: 'primary' | 'secondary';
 }
 
-export const GameButton: React.FC<GameButtonProps> = ({ 
-  onClick, 
-  children, 
-  variant = 'primary' 
+export const GameButton: React.FC<GameButtonProps> = ({
+  onClick,
+  children,
+  variant = 'primary',
 }) => {
   const buttonStyle = {
     padding: '12px 24px',
     fontSize: '1rem',
     fontWeight: 'bold',
     borderRadius: '8px',
-    background: variant === 'primary' 
-      ? 'linear-gradient(135deg, #61dafb 0%, #2c5282 100%)'
-      : '#404258',
+    background:
+      variant === 'primary'
+        ? 'linear-gradient(135deg, #61dafb 0%, #2c5282 100%)'
+        : '#404258',
     color: '#fff',
     border: 'none',
     cursor: 'pointer',

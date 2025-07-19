@@ -17,12 +17,14 @@ export const DifficultySelector: React.FC<DifficultySelectorProps> = ({
   ];
 
   return (
-    <div style={{
-      display: 'flex',
-      gap: '10px',
-      alignItems: 'center',
-      marginBottom: '20px',
-    }}>
+    <div
+      style={{
+        display: 'flex',
+        gap: '10px',
+        alignItems: 'center',
+        marginBottom: '20px',
+      }}
+    >
       <span style={{ color: '#8b949e', fontSize: '1rem', marginRight: '10px' }}>
         Difficulty:
       </span>
@@ -35,9 +37,10 @@ export const DifficultySelector: React.FC<DifficultySelectorProps> = ({
             fontSize: '0.9rem',
             fontWeight: 'bold',
             borderRadius: '6px',
-            background: selectedDifficulty === difficulty.value 
-              ? difficulty.color 
-              : '#404258',
+            background:
+              selectedDifficulty === difficulty.value
+                ? difficulty.color
+                : '#404258',
             color: '#fff',
             border: `2px solid ${selectedDifficulty === difficulty.value ? difficulty.color : 'transparent'}`,
             cursor: 'pointer',

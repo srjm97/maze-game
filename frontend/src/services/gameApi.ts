@@ -5,7 +5,10 @@ const API_BASE_URL = 'http://localhost:8000';
 
 export const gameApi = {
   async createGame(width: number, height: number): Promise<string> {
-    const response = await axios.post(`${API_BASE_URL}/game`, { width, height });
+    const response = await axios.post(`${API_BASE_URL}/game`, {
+      width,
+      height,
+    });
     return response.data;
   },
 
@@ -14,7 +17,10 @@ export const gameApi = {
     return response.data;
   },
 
-  async movePlayer(gameId: string, direction: string): Promise<GameState | null> {
+  async movePlayer(
+    gameId: string,
+    direction: string
+  ): Promise<GameState | null> {
     try {
       const response = await axios.post(`${API_BASE_URL}/game/${gameId}/move`, {
         direction,
