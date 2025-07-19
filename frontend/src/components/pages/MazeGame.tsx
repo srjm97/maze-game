@@ -6,6 +6,9 @@ import { faUser, faStar, faCube, faArrowLeft } from '@fortawesome/free-solid-svg
 import { messages } from '../../constants/messages';
 import { speakMessage } from '../../utils/speakmessage';
 
+
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000';
+
 // Cell size will be dynamic based on screen size
 const MIN_CELL_SIZE = 25;
 const MAX_CELL_SIZE = 40;
@@ -157,7 +160,7 @@ export default function MazeGame({ onBackToLanding }: MazeGameProps) {
     try {
       setLoading(true);
       setMoveCount(0); // Reset move count for new game
-      const response = await axios.post('http://localhost:8000/game', {
+      const response = await axios.post(`${API_BASE_URL}/game`, {
         width: 15,
         height: 15
       });
@@ -174,7 +177,7 @@ export default function MazeGame({ onBackToLanding }: MazeGameProps) {
 
   const fetchGameState = async (currentGameId: string) => {
     try {
-      const response = await axios.get(`http://localhost:8000/game/${currentGameId}`);
+      const response = await axios.get(`${API_BASE_URL}/game/${currentGameId}`);
       setGameState(response.data);
     } catch (error) {
       console.error('Error fetching game state:', error);
