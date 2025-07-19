@@ -3,9 +3,20 @@ import React, { useState } from 'react';
 import LandingPage from './LandingPage';
 import { MantineProvider } from '@mantine/core';
 import MazeGame from './components/pages/MazeGame';
+import TilesGame from './components/pages/TilesGame';
+
+type GameType = 'maze' | 'tiles' | null;
 
 function App() {
-  const [showGame, setShowGame] = useState(false);
+  const [currentGame, setCurrentGame] = useState<GameType>(null);
+
+  const handleGameSelect = (gameType: GameType) => {
+    setCurrentGame(gameType);
+  };
+
+  const handleBackToMenu = () => {
+    setCurrentGame(null);
+  };
 
   return (
     <MantineProvider>
@@ -13,14 +24,20 @@ function App() {
         minHeight: '100vh',
         background: '#1a1b1e'
       }}>
-        {showGame ? (
+        {currentGame === 'maze' ? (
           <div style={{
             animation: 'fadeIn 0.5s ease'
           }}>
-            <MazeGame />
+            <MazeGame onBackToLanding={handleBackToMenu} />
+          </div>
+        ) : currentGame === 'tiles' ? (
+          <div style={{
+            animation: 'fadeIn 0.5s ease'
+          }}>
+            {/* <TilesGame onBackToMenu={handleBackToMenu} /> */}
           </div>
         ) : (
-          <LandingPage onStartGame={() => setShowGame(true)} />
+          <LandingPage onGameSelect={handleGameSelect} />
         )}
       </div>
       <style>

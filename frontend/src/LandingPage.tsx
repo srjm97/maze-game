@@ -1,12 +1,12 @@
 import React from 'react';
-import { faGamepad, faVolumeHigh, faTrophy, faArrowRight } from '@fortawesome/free-solid-svg-icons';
+import { faGamepad, faThLarge, faArrowRight } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 interface LandingPageProps {
-  onStartGame: () => void;
+  onGameSelect: (gameType: 'maze' | 'tiles') => void;
 }
 
-export default function LandingPage({ onStartGame }: LandingPageProps) {
+export default function LandingPage({ onGameSelect }: LandingPageProps) {
   return (
     <div style={{
       minHeight: '100vh',
@@ -34,7 +34,7 @@ export default function LandingPage({ onStartGame }: LandingPageProps) {
           fontWeight: 'bold',
           textShadow: '0 0 20px rgba(97, 218, 251, 0.5)'
         }}>
-          EchoMaze
+          Game Console
         </h1>
         <p style={{
           fontSize: '1.2rem',
@@ -42,102 +42,119 @@ export default function LandingPage({ onStartGame }: LandingPageProps) {
           maxWidth: '600px',
           margin: '0 auto'
         }}>
-          Navigate through a dynamically generated maze in this challenging puzzle game
+          Choose your adventure: Navigate mazes or improve memory with colorful tiles
         </p>
       </div>
 
       <div style={{
         display: 'grid',
-        gridTemplateColumns: 'repeat(3, 1fr)',
-        gap: '2rem',
-        maxWidth: '900px',
+        gridTemplateColumns: 'repeat(2, 1fr)',
+        gap: '3rem',
+        maxWidth: '800px',
         margin: '2rem 0',
         animation: 'fadeInUp 0.8s ease-out 0.2s backwards'
       }}>
         {[
           {
             icon: faGamepad,
-            title: 'Intuitive Controls',
-            description: 'Use arrow keys or WASD to navigate through the maze'
+            title: 'Maze Game',
+            description: 'Navigate through dynamically generated mazes with audio feedback',
+            color: '#61dafb',
+            gameType: 'maze' as const
           },
           {
-            icon: faVolumeHigh,
-            title: 'Audio Feedback',
-            description: 'Listen to spatial audio cues to guide your way'
-          },
-          {
-            icon: faTrophy,
-            title: 'Challenge Yourself',
-            description: 'Each maze is uniquely generated for a new experience'
+            icon: faThLarge,
+            title: 'Memory Tiles',
+            description: 'Improve memory and cognitive skills with colorful pattern matching',
+            color: '#ff6b6b',
+            gameType: 'tiles' as const
           }
-        ].map((feature, index) => (
+        ].map((game, index) => (
           <div 
             key={index} 
-            className="feature-card"
+            className="game-card"
+            onClick={() => onGameSelect(game.gameType)}
             style={{
               background: '#282c34',
-              padding: '2rem',
-              borderRadius: '10px',
+              padding: '3rem 2rem',
+              borderRadius: '15px',
               textAlign: 'center',
-              transition: 'transform 0.3s ease',
-              cursor: 'default'
+              transition: 'all 0.3s ease',
+              cursor: 'pointer',
+              border: `2px solid transparent`,
+              position: 'relative',
+              overflow: 'hidden'
             }}>
+            <div style={{
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              background: `linear-gradient(135deg, ${game.color}15 0%, transparent 100%)`,
+              opacity: 0,
+              transition: 'opacity 0.3s ease'
+            }} className="game-card-bg" />
+            
             <FontAwesomeIcon 
-              icon={feature.icon} 
+              icon={game.icon} 
               style={{ 
-                fontSize: '2.5rem', 
-                color: '#61dafb',
-                marginBottom: '1rem',
-                filter: 'drop-shadow(0 0 10px rgba(97, 218, 251, 0.3))'
+                fontSize: '3rem', 
+                color: game.color,
+                marginBottom: '1.5rem',
+                filter: `drop-shadow(0 0 15px ${game.color}50)`,
+                position: 'relative',
+                zIndex: 1
               }} 
             />
             <h3 style={{
-              fontSize: '1.5rem',
-              marginBottom: '0.5rem',
-              color: '#fff'
+              fontSize: '1.8rem',
+              marginBottom: '1rem',
+              color: '#fff',
+              position: 'relative',
+              zIndex: 1
             }}>
-              {feature.title}
+              {game.title}
             </h3>
             <p style={{
               color: '#8b949e',
-              fontSize: '0.9rem'
+              fontSize: '1rem',
+              marginBottom: '1.5rem',
+              position: 'relative',
+              zIndex: 1
             }}>
-              {feature.description}
+              {game.description}
             </p>
+            <div style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '0.5rem',
+              color: game.color,
+              fontSize: '1rem',
+              fontWeight: 'bold',
+              position: 'relative',
+              zIndex: 1
+            }}>
+              Play Now
+              <FontAwesomeIcon icon={faArrowRight} />
+            </div>
           </div>
         ))}
       </div>
 
-      <button
-        onClick={onStartGame}
-        style={{
-          padding: '1rem 2rem',
-          fontSize: '1.2rem',
-          fontWeight: 'bold',
-          borderRadius: '8px',
-          background: 'linear-gradient(135deg, #61dafb 0%, #2c5282 100%)',
-          color: '#fff',
-          border: 'none',
-          cursor: 'pointer',
-          transition: 'all 0.3s ease',
-          boxShadow: '0 4px 6px rgba(97, 218, 251, 0.2)',
-          display: 'flex',
-          alignItems: 'center',
-          gap: '0.5rem',
-          animation: 'fadeInUp 0.8s ease-out 0.4s backwards'
-        }}
-      >
-        Start Game
-        <FontAwesomeIcon icon={faArrowRight} />
-      </button>
-
       <style>
         {`
-          .feature-card {
+          .game-card {
             transform: translateY(0);
           }
-          .feature-card:hover {
-            transform: translateY(-5px);
+          .game-card:hover {
+            transform: translateY(-10px);
+            border-color: #61dafb50;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+          }
+          .game-card:hover .game-card-bg {
+            opacity: 1;
           }
 
           @keyframes fadeInDown {
