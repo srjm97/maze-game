@@ -1,4 +1,3 @@
-
 export interface GameScore {
   score: number;
   date: string;
@@ -27,15 +26,15 @@ export const getHighScores = (): HighScores => {
   } catch (error) {
     console.error('Error reading high scores:', error);
   }
-  
+
   // Return default structure if nothing stored or error occurred
   return {
     maze: [],
     tiles: {
       easy: [],
       medium: [],
-      hard: []
-    }
+      hard: [],
+    },
   };
 };
 
@@ -49,47 +48,59 @@ const saveHighScores = (scores: HighScores): void => {
 };
 
 // Add a new maze score (lower moves = better)
-export const addMazeScore = (moves: number): { isNewRecord: boolean; position: number } => {
-  const scores = getHighScores();
-  const newScore: GameScore = {
-    score: moves,
-    date: new Date().toISOString()
-  };
-  
-  scores.maze.push(newScore);
-  scores.maze.sort((a, b) => a.score - b.score); // Sort by moves (ascending - lower is better)
-  
-  const position = scores.maze.findIndex(score => score.date === newScore.date) + 1;
-  const isNewRecord = position === 1;
-  
-  // Keep only top scores
-  scores.maze = scores.maze.slice(0, MAX_SCORES_PER_CATEGORY);
-  
-  saveHighScores(scores);
-  
-  return { isNewRecord, position };
-};
-
-// Add a new tiles score (lower moves = better)
-export const addTilesScore = (moves: number, difficulty: 'easy' | 'medium' | 'hard'): { isNewRecord: boolean; position: number } => {
+export const addMazeScore = (
+  moves: number
+): { isNewRecord: boolean; position: number } => {
   const scores = getHighScores();
   const newScore: GameScore = {
     score: moves,
     date: new Date().toISOString(),
-    difficulty
   };
-  
+
+  scores.maze.push(newScore);
+  scores.maze.sort((a, b) => a.score - b.score); // Sort by moves (ascending - lower is better)
+
+  const position =
+    scores.maze.findIndex((score) => score.date === newScore.date) + 1;
+  const isNewRecord = position === 1;
+
+  // Keep only top scores
+  scores.maze = scores.maze.slice(0, MAX_SCORES_PER_CATEGORY);
+
+  saveHighScores(scores);
+
+  return { isNewRecord, position };
+};
+
+// Add a new tiles score (lower moves = better)
+export const addTilesScore = (
+  moves: number,
+  difficulty: 'easy' | 'medium' | 'hard'
+): { isNewRecord: boolean; position: number } => {
+  const scores = getHighScores();
+  const newScore: GameScore = {
+    score: moves,
+    date: new Date().toISOString(),
+    difficulty,
+  };
+
   scores.tiles[difficulty].push(newScore);
   scores.tiles[difficulty].sort((a, b) => a.score - b.score); // Sort by moves (ascending - lower is better)
-  
-  const position = scores.tiles[difficulty].findIndex(score => score.date === newScore.date) + 1;
+
+  const position =
+    scores.tiles[difficulty].findIndex(
+      (score) => score.date === newScore.date
+    ) + 1;
   const isNewRecord = position === 1;
-  
+
   // Keep only top scores
-  scores.tiles[difficulty] = scores.tiles[difficulty].slice(0, MAX_SCORES_PER_CATEGORY);
-  
+  scores.tiles[difficulty] = scores.tiles[difficulty].slice(
+    0,
+    MAX_SCORES_PER_CATEGORY
+  );
+
   saveHighScores(scores);
-  
+
   return { isNewRecord, position };
 };
 
@@ -100,9 +111,13 @@ export const getBestMazeScore = (): number | null => {
 };
 
 // Get best score for tiles by difficulty
-export const getBestTilesScore = (difficulty: 'easy' | 'medium' | 'hard'): number | null => {
+export const getBestTilesScore = (
+  difficulty: 'easy' | 'medium' | 'hard'
+): number | null => {
   const scores = getHighScores();
-  return scores.tiles[difficulty].length > 0 ? scores.tiles[difficulty][0].score : null;
+  return scores.tiles[difficulty].length > 0
+    ? scores.tiles[difficulty][0].score
+    : null;
 };
 
 // Clear all high scores (useful for testing)

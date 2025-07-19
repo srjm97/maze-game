@@ -10,24 +10,26 @@ interface TilesGridProps {
   selectedTiles: number[];
 }
 
-export const TilesGrid: React.FC<TilesGridProps> = ({ 
-  tiles, 
-  gridDimensions, 
-  cellSize, 
+export const TilesGrid: React.FC<TilesGridProps> = ({
+  tiles,
+  gridDimensions,
+  cellSize,
   onTileClick,
-  selectedTiles 
+  selectedTiles,
 }) => {
   return (
-    <div style={{
-      display: 'grid',
-      gridTemplateColumns: `repeat(${gridDimensions.width}, ${cellSize}px)`,
-      gap: '8px',
-      background: '#2c2d31',
-      padding: '20px',
-      borderRadius: '15px',
-      boxShadow: '0 0 25px rgba(0,0,0,0.4)',
-      margin: '20px auto',
-    }}>
+    <div
+      style={{
+        display: 'grid',
+        gridTemplateColumns: `repeat(${gridDimensions.width}, ${cellSize}px)`,
+        gap: '8px',
+        background: '#2c2d31',
+        padding: '20px',
+        borderRadius: '15px',
+        boxShadow: '0 0 25px rgba(0,0,0,0.4)',
+        margin: '20px auto',
+      }}
+    >
       {tiles.map((tile, index) => (
         <TileCell
           key={index}

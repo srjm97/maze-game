@@ -21,6 +21,7 @@ export const messages = {
   feedback: 'Feedback',
   playAgain: 'Play Again',
   exit: 'Exit',
-  rules: 'Try to find the exit of the maze as quickly as possible. Avoid obstacles press the arrow keys to move around.',
-    victory: 'Congratulations! You completed the maze!',
-}
+  rules:
+    'Try to find the exit of the maze as quickly as possible. Avoid obstacles press the arrow keys to move around.',
+  victory: 'Congratulations! You completed the maze!',
+};

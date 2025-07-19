@@ -1,5 +1,3 @@
-
-
 # **EchoMaze - React Game**
 
 EchoMaze is an interactive maze game built with **React**, **TypeScript**, **Vite**, and **Axios**, featuring audio feedback and keyboard controls.
@@ -8,11 +6,11 @@ EchoMaze is an interactive maze game built with **React**, **TypeScript**, **Vit
 
 ## **Features**
 
-* Dynamic maze generation from a backend API.
-* Audio feedback for wall collisions, movement, and victory.
-* Keyboard controls (Arrow keys or WASD).
-* Victory screen with move count and animations.
-* Fully responsive UI with dynamic cell sizing.
+- Dynamic maze generation from a backend API.
+- Audio feedback for wall collisions, movement, and victory.
+- Keyboard controls (Arrow keys or WASD).
+- Victory screen with move count and animations.
+- Fully responsive UI with dynamic cell sizing.
 
 ---
 
@@ -20,9 +18,9 @@ EchoMaze is an interactive maze game built with **React**, **TypeScript**, **Vit
 
 Ensure you have the following installed on your machine:
 
-* **Node.js** (>= 16)
-* **npm** (>= 8) or **yarn**
-* A backend server running at `http://localhost:8000` (or update `.env` with your backend URL).
+- **Node.js** (>= 16)
+- **npm** (>= 8) or **yarn**
+- A backend server running at `http://localhost:8000` (or update `.env` with your backend URL).
 
 ---
 
@@ -93,8 +91,8 @@ npm run preview
 
 ## **Keyboard Controls**
 
-* **Arrow keys** or **W/A/S/D** - Move the player.
-* **Spacebar** - Restart the game.
+- **Arrow keys** or **W/A/S/D** - Move the player.
+- **Spacebar** - Restart the game.
 
 ---
 
@@ -102,9 +100,9 @@ npm run preview
 
 The game communicates with a backend server that:
 
-* Generates the maze.
-* Processes player movements.
-* Sends updated game states.
+- Generates the maze.
+- Processes player movements.
+- Sends updated game states.
 
 Ensure your backend (API) is running on the URL provided in `.env`.
 
@@ -112,19 +110,17 @@ Ensure your backend (API) is running on the URL provided in `.env`.
 
 ## **Scripts**
 
-* `npm run dev` – Start development server.
-* `npm run build` – Build the app for production.
-* `npm run preview` – Preview the production build.
-* `npm run lint` – Run ESLint checks.
+- `npm run dev` – Start development server.
+- `npm run build` – Build the app for production.
+- `npm run preview` – Preview the production build.
+- `npm run lint` – Run ESLint checks.
 
 ---
 
 ## **Tech Stack**
 
-* **React 18 + Vite**
-* **TypeScript**
-* **Axios**
-* **Mantine UI**
-* **FontAwesome Icons**
-
-
+- **React 18 + Vite**
+- **TypeScript**
+- **Axios**
+- **Mantine UI**
+- **FontAwesome Icons**
