@@ -5,7 +5,6 @@ import { VictoryModal } from '../molecules/VictoryModal';
 import { useTilesGame } from '../../hooks/useTilesGame';
 import { useAudio } from '../../hooks/useAudio';
 import { TILES_CONFIG } from '../../constants/tilesConstants';
-import { speakMessage } from '../../utils/speakmessage';
 import { addTilesScore, getBestTilesScore } from '../../utils/highScoreUtils';
 import '../../styles/animations.css';
 import { ScoreDisplay } from '../molecules/ScoreDisplay';

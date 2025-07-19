@@ -238,14 +238,12 @@ export default function MazeGame({ onBackToLanding }: MazeGameProps) {
       setMoveCount(newMoveCount);
 
       if (response.data.game_over) {
-        // Save the score and check if it's a new record
+
         const scoreResult = addMazeScore(newMoveCount);
         setIsNewRecord(scoreResult.isNewRecord);
         
-        // Update best score display
         setBestScore(getBestMazeScore());
         
-        // Play victory music, speak victory message, and show success message
         playVictoryMusic();
         speakMessage(scoreResult.isNewRecord ? 
           `${messages.victory} New record with ${newMoveCount} moves!` : 
