@@ -17,23 +17,23 @@ from models import Token, User, UserResponse
 from config import settings
 
 logger = logging.getLogger(__name__)
-# @asynccontextmanager
-# async def lifespan(app: FastAPI):
-#     await connect_to_mongo()
-#     yield
-#     await close_mongo_connection()
-
-# app = FastAPI(title="EchoMaze Backend", lifespan=lifespan)
-
-app = FastAPI(title="EchoMaze Backend")
-
-@app.on_event("startup")
-async def startup_event():
+@asynccontextmanager
+async def lifespan(app: FastAPI):
     await connect_to_mongo()
-
-@app.on_event("shutdown")
-async def shutdown_event():
+    yield
     await close_mongo_connection()
+
+app = FastAPI(title="EchoMaze Backend", lifespan=lifespan)
+
+# app = FastAPI(title="EchoMaze Backend")
+
+# @app.on_event("startup")
+# async def startup_event():
+#     await connect_to_mongo()
+
+# @app.on_event("shutdown")
+# async def shutdown_event():
+#     await close_mongo_connection()
 
 # Configure CORS
 app.add_middleware(

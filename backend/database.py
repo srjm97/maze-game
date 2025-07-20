@@ -10,7 +10,7 @@ class Database:
 
 db = Database()
 
-def connect_to_mongo():
+async def connect_to_mongo():
     if db.client is None or db.database is None:
         try:
             db.client = AsyncIOMotorClient(settings.MONGODB_URL)
@@ -22,11 +22,8 @@ def connect_to_mongo():
 
 async def get_database():
     if db.database is None:
-        # Call the sync function in a thread pool to avoid blocking
-        from fastapi.concurrency import run_in_threadpool
-        await run_in_threadpool(connect_to_mongo)
+        await connect_to_mongo()  # ← now uses async version
     return db.database
-
 
 async def close_mongo_connection():
     if db.client:
