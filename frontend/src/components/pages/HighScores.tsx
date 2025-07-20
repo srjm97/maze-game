@@ -100,7 +100,7 @@ export default function HighScores({ onBackToLanding }: HighScoresProps) {
 
       // Fetch user's personal scores
       const userScorePromises = [
-        axios.get(`${API_BASE_URL}/score/highest?user_email=${currentUser.email}&game_name=maze`)
+        axios.get(`${API_BASE_URL}/score/highest?user_email=${currentUser.email}&game_name=maze_easy`)
           .then(res => ({ game_name: 'Maze Game', highest_score: res.data.highest_score }))
           .catch(() => null),
         axios.get(`${API_BASE_URL}/score/highest?user_email=${currentUser.email}&game_name=tiles_easy`)
