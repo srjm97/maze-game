@@ -184,22 +184,26 @@ async def get_highest_score(
     game_name: str = Query(...),
     db = Depends(get_database)
 ):
-    """Get the highest score for a user in a specific game"""
+    """Get the highest score for a user in a specific game (minimum value)"""
     score_doc = await db.scores.find_one(
         {"user_email": user_email, "game_name": game_name},
-        sort=[("score", -1)]
+        sort=[("score", 1)]  # Ascending order, minimum value first
     )
     if not score_doc:
         raise HTTPException(status_code=404, detail="Score not found")
-    return {"user_email": score_doc["user_email"], "game_name": score_doc["game_name"], "highest_score": score_doc["score"]}
+    return {
+        "user_email": score_doc["user_email"],
+        "game_name": score_doc["game_name"],
+        "highest_score": score_doc["score"]
+    }
 
 @app.get("/score/top10")
 async def get_top_10_scores(
     game_name: str = Query(...),
     db = Depends(get_database)
 ):
-    """Get top 10 scores for a specific game across all users"""
-    cursor = db.scores.find({"game_name": game_name}).sort("score", -1).limit(10)
+    """Get top 10 scores (lowest values) for a specific game across all users"""
+    cursor = db.scores.find({"game_name": game_name}).sort("score", 1).limit(10)  # Ascending order, lowest scores first
     top_scores = []
     async for score_doc in cursor:
         top_scores.append({
