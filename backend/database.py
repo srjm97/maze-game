@@ -11,7 +11,7 @@ class Database:
 db = Database()
 
 def connect_to_mongo():
-    if db.client is None:
+    if db.client is None or db.database is None:
         try:
             db.client = AsyncIOMotorClient(settings.MONGODB_URL)
             db.database = db.client[settings.DATABASE_NAME]
