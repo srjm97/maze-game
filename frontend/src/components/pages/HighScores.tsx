@@ -85,7 +85,7 @@ export default function HighScores({ onBackToLanding }: HighScoresProps) {
     try {
       // Fetch global leaderboards
       const [mazeResponse, tilesEasyResponse, tilesMediumResponse, tilesHardResponse] = await Promise.all([
-        axios.get(`${API_BASE_URL}/score/top10?game_name=maze`).catch(() => ({ data: { top_10_scores: [] } })),
+        axios.get(`${API_BASE_URL}/score/top10?game_name=maze_easy`).catch(() => ({ data: { top_10_scores: [] } })),
         axios.get(`${API_BASE_URL}/score/top10?game_name=tiles_easy`).catch(() => ({ data: { top_10_scores: [] } })),
         axios.get(`${API_BASE_URL}/score/top10?game_name=tiles_medium`).catch(() => ({ data: { top_10_scores: [] } })),
         axios.get(`${API_BASE_URL}/score/top10?game_name=tiles_hard`).catch(() => ({ data: { top_10_scores: [] } })),

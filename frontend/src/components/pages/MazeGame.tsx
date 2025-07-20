@@ -440,6 +440,7 @@ export default function MazeGame({ onBackToLanding }: MazeGameProps) {
         bestScore={bestScore}
         isNewRecord={isNewRecord && showSuccess}
         gameType="maze"
+        difficulty=''
       />
       
       <div

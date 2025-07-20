@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrophy, faMedal } from '@fortawesome/free-solid-svg-icons';
+import axios from 'axios';
 
 interface ScoreDisplayProps {
   currentScore: number;
@@ -15,10 +16,38 @@ export const ScoreDisplay: React.FC<ScoreDisplayProps> = ({
   bestScore,
   isNewRecord = false,
   gameType,
-  difficulty,
+  difficulty="",
 }) => {
   const formatScore = (score: number) =>
     `${score} move${score === 1 ? '' : 's'}`;
+  const userEmail = (() => {
+    try {
+      const userData = sessionStorage.getItem('user_data');
+      if (!userData) return 'guest@unknown.local';
+      const parsed = JSON.parse(userData);
+      return parsed?.email || 'guest@unknown.local';
+    } catch {
+      return 'guest@unknown.local';
+    }
+  })();
+
+
+  useEffect(() => {
+    axios
+      .post('http://localhost:8000/score/add', null, {
+        params: {
+          user_email: userEmail,
+          game_name: `${gameType}_${difficulty || 'easy'}`,
+          score: currentScore,
+        },
+      })
+      .then((res) => {
+        console.log('Score submitted:', res.data);
+      })
+      .catch((err) => {
+        console.error('Error submitting score:', err);
+      });
+  }, [userEmail, gameType, currentScore]);
 
   return (
     <div
