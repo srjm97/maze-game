@@ -12,29 +12,13 @@ import re
 
 from auth import GoogleAuth, create_access_token, get_current_user
 from database import close_mongo_connection, connect_to_mongo, get_database
-from games.maze_game import GameConfig, GameState, MazeGame, MoveRequest
+# from games.maze_game import GameConfig, GameState, MazeGame, MoveRequest
 from models import Token, User, UserResponse
 from config import settings
 
 logger = logging.getLogger(__name__)
 
-# @asynccontextmanager
-# async def lifespan(app: FastAPI):
-#     await connect_to_mongo()
-#     yield
-#     await close_mongo_connection()
-
 app = FastAPI(title="EchoMaze Backend")
-
-# app = FastAPI(title="EchoMaze Backend")
-
-# @app.on_event("startup")
-# async def startup_event():
-#     await connect_to_mongo()
-
-# @app.on_event("shutdown")
-# async def shutdown_event():
-#     await close_mongo_connection()
 
 # Configure CORS
 app.add_middleware(
@@ -46,7 +30,7 @@ app.add_middleware(
 )
 
 # Store active games
-games = {}
+# games = {}
     
 @app.get("/auth/google/login")
 async def google_login():
@@ -140,39 +124,39 @@ async def protected_route(current_user: UserResponse = Depends(get_current_user)
     """Example protected route"""
     return {"message": f"Hello {current_user.name}, this is a protected route!"}
 
-@app.post("/game", response_model=str)
-async def create_game(config: GameConfig):
-    game_id = str(random.randint(1000, 9999))
-    games[game_id] = MazeGame(config.width, config.height)
-    return game_id
+# @app.post("/game", response_model=str)
+# async def create_game(config: GameConfig):
+#     game_id = str(random.randint(1000, 9999))
+#     games[game_id] = MazeGame(config.width, config.height)
+#     return game_id
 
-@app.get("/game/{game_id}", response_model=GameState)
-async def get_game(game_id: str):
-    if game_id not in games:
-        raise HTTPException(status_code=404, detail="Game not found")
-    return games[game_id].get_game_state()
+# @app.get("/game/{game_id}", response_model=GameState)
+# async def get_game(game_id: str):
+#     if game_id not in games:
+#         raise HTTPException(status_code=404, detail="Game not found")
+#     return games[game_id].get_game_state()
 
-@app.post("/game/{game_id}/move")
-async def move_player(game_id: str, move: MoveRequest):
-    if game_id not in games:
-        raise HTTPException(status_code=404, detail="Game not found")
+# @app.post("/game/{game_id}/move")
+# async def move_player(game_id: str, move: MoveRequest):
+#     if game_id not in games:
+#         raise HTTPException(status_code=404, detail="Game not found")
     
-    if move.direction not in ["up", "down", "left", "right"]:
-        raise HTTPException(status_code=400, detail="Invalid direction")
+#     if move.direction not in ["up", "down", "left", "right"]:
+#         raise HTTPException(status_code=400, detail="Invalid direction")
     
-    game = games[game_id]
-    success = game.move_player(move.direction)
+#     game = games[game_id]
+#     success = game.move_player(move.direction)
     
-    if not success:
-        raise HTTPException(status_code=400, detail="Invalid move")
+#     if not success:
+#         raise HTTPException(status_code=400, detail="Invalid move")
     
-    return game.get_game_state()
+#     return game.get_game_state()
 
-@app.get("/game/{game_id}/walls")
-async def get_nearby_walls(game_id: str):
-    if game_id not in games:
-        raise HTTPException(status_code=404, detail="Game not found")
-    return games[game_id].get_nearby_walls()
+# @app.get("/game/{game_id}/walls")
+# async def get_nearby_walls(game_id: str):
+#     if game_id not in games:
+#         raise HTTPException(status_code=404, detail="Game not found")
+#     return games[game_id].get_nearby_walls()
 
 @app.post("/score/add")
 async def add_score(
@@ -280,3 +264,5 @@ async def handle_audio(file: UploadFile = File(...)):
 def home():
     return {"message": "FastAPI is live on Vercel!"}
 
+if __name__ == "__main__":
+    uvicorn.run(app, host="0.0.0.0", port=8000)

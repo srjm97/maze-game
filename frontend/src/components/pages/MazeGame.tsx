@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
 import { Grid } from '@mantine/core';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
@@ -15,8 +14,118 @@ import { getBestMazeScore, addMazeScore } from '../../utils/highScoreUtils';
 import BackButton from '../atoms/BackButton';
 import { VictoryModal } from '../molecules/VictoryModal';
 
-const API_BASE_URL =
-  import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000';
+
+// Maze game logic moved from backend to frontend
+class MazeGameEngine {
+  width: number;
+  height: number;
+  maze_layout: number[][];
+  player_position: { x: number; y: number };
+  goal_position: { x: number; y: number };
+  game_over: boolean;
+
+  constructor(width: number, height: number) {
+    this.width = width;
+    this.height = height;
+    this.maze_layout = this.generateMaze(width, height);
+    this.player_position = { x: 0, y: 0 };
+    this.goal_position = { x: width - 1, y: height - 1 };
+    this.game_over = false;
+  }
+
+  generateMaze(width: number, height: number): number[][] {
+    // Proper maze generation: randomized DFS (same as backend)
+    const maze: number[][] = Array.from({ length: height }, () => Array(width).fill(1));
+
+    function carvePath(x: number, y: number) {
+      maze[y][x] = 0; // Mark current cell as path
+      // Define possible directions (up, right, down, left)
+      const directions = [
+        [0, -2], // up
+        [2, 0],  // right
+        [0, 2],  // down
+        [-2, 0], // left
+      ];
+      // Shuffle directions
+      for (let i = directions.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [directions[i], directions[j]] = [directions[j], directions[i]];
+      }
+      for (const [dx, dy] of directions) {
+        const newX = x + dx;
+        const newY = y + dy;
+        if (
+          newX >= 0 && newX < width &&
+          newY >= 0 && newY < height &&
+          maze[newY][newX] === 1
+        ) {
+          maze[y + dy / 2][x + dx / 2] = 0;
+          maze[newY][newX] = 0;
+          carvePath(newX, newY);
+        }
+      }
+    }
+
+    // Start from (0,0)
+    carvePath(0, 0);
+
+    // Ensure the goal is accessible
+    maze[height - 1][width - 1] = 0;
+    // Make sure there's a path to the goal
+    if (width > 2 && height > 2) {
+      maze[height - 1][width - 2] = 0; // Path to goal horizontally
+      maze[height - 2][width - 1] = 0; // Path to goal vertically
+    }
+    return maze;
+  }
+
+  movePlayer(direction: string): boolean {
+    if (this.game_over) return false;
+    const { x, y } = this.player_position;
+    let newX = x;
+    let newY = y;
+    if (direction === 'up') newY--;
+    else if (direction === 'down') newY++;
+    else if (direction === 'left') newX--;
+    else if (direction === 'right') newX++;
+
+    // Check bounds
+    if (
+      newX < 0 ||
+      newY < 0 ||
+      newX >= this.width ||
+      newY >= this.height ||
+      this.maze_layout[newY][newX] === 1
+    ) {
+      return false; // Hit wall or out of bounds
+    }
+    this.player_position = { x: newX, y: newY };
+    if (newX === this.goal_position.x && newY === this.goal_position.y) {
+      this.game_over = true;
+    }
+    return true;
+  }
+
+  get_game_state() {
+    return {
+      player_position: this.player_position,
+      goal_position: this.goal_position,
+      maze_layout: this.maze_layout,
+      game_over: this.game_over,
+    };
+  }
+
+  get_nearby_walls() {
+    // Returns walls around the player (up, down, left, right)
+    const { x, y } = this.player_position;
+    return {
+      up: y > 0 ? this.maze_layout[y - 1][x] === 1 : true,
+      down: y < this.height - 1 ? this.maze_layout[y + 1][x] === 1 : true,
+      left: x > 0 ? this.maze_layout[y][x - 1] === 1 : true,
+      right: x < this.width - 1 ? this.maze_layout[y][x + 1] === 1 : true,
+    };
+  }
+}
 
 // Cell size will be dynamic based on screen size
 const MIN_CELL_SIZE = 25;
@@ -39,7 +148,7 @@ interface MazeGameProps {
 }
 
 export default function MazeGame({ onBackToLanding }: MazeGameProps) {
-  const [gameId, setGameId] = useState<string | null>(null);
+  const [mazeGame, setMazeGame] = useState<MazeGameEngine | null>(null);
   const [gameState, setGameState] = useState<GameState | null>(null);
   const [bestScore, setBestScore] = useState<number | null>(null);
   const [loading, setLoading] = useState(true);
@@ -188,91 +297,57 @@ export default function MazeGame({ onBackToLanding }: MazeGameProps) {
     setBestScore(getBestMazeScore());
   }, []);
 
-  const startNewGame = async () => {
-    try {
-      setLoading(true);
-      setMoveCount(0); // Reset move count for new game
-      setIsNewRecord(false); // Reset new record flag
-      setShowSuccess(false); // Hide success message
-
-      const response = await axios.post(`${API_BASE_URL}/game`, {
-        width: 15,
-        height: 15,
-      });
-      setGameId(response.data);
-      await fetchGameState(response.data);
-      speakMessage(`${messages.startGame},${messages.instructions}`);
-    } catch (error) {
-      console.error('Error starting new game:', error);
-    } finally {
-      setLoading(false);
-    }
+  const startNewGame = () => {
+    setLoading(true);
+    setMoveCount(0);
+    setIsNewRecord(false);
+    setShowSuccess(false);
+    const newMazeGame = new MazeGameEngine(15, 15);
+    setMazeGame(newMazeGame);
+    setGameState(newMazeGame.get_game_state());
+    speakMessage(`${messages.startGame},${messages.instructions}`);
+    setLoading(false);
   };
 
-  const fetchGameState = async (currentGameId: string) => {
-    try {
-      const response = await axios.get(`${API_BASE_URL}/game/${currentGameId}`);
-      setGameState(response.data);
-    } catch (error) {
-      console.error('Error fetching game state:', error);
+  const movePlayer = (direction: string) => {
+    if (!mazeGame || gameState?.game_over) return;
+    const success = mazeGame.movePlayer(direction);
+    if (!success) {
+      playWallHitSound();
+      return;
     }
-  };
-
-  const movePlayer = async (direction: string) => {
-    if (!gameId || gameState?.game_over) return;
-
-    try {
-      const response = await axios.post(
-        `${API_BASE_URL}/game/${gameId}/move`,
-        {
-          direction,
-        }
+    const newState = mazeGame.get_game_state();
+    setGameState(newState);
+    const newMoveCount = moveCount + 1;
+    setMoveCount(newMoveCount);
+    if (newState.game_over) {
+      const scoreResult = addMazeScore(newMoveCount);
+      setIsNewRecord(scoreResult.isNewRecord);
+      setBestScore(getBestMazeScore());
+      playVictoryMusic();
+      speakMessage(
+        scoreResult.isNewRecord
+          ? `${messages.victory} New record with ${newMoveCount} moves!`
+          : messages.victory
       );
-
-      // If move was invalid (hit a wall), play wall hit sound
-      if (!response.data) {
-        playWallHitSound();
-        return;
-      }
-
-      setGameState(response.data);
-      const newMoveCount = moveCount + 1;
-      setMoveCount(newMoveCount);
-
-      if (response.data.game_over) {
-        const scoreResult = addMazeScore(newMoveCount);
-        setIsNewRecord(scoreResult.isNewRecord);
-
-        setBestScore(getBestMazeScore());
-
-        playVictoryMusic();
-        speakMessage(
-          scoreResult.isNewRecord
-            ? `${messages.victory} New record with ${newMoveCount} moves!`
-            : messages.victory
-        );
-        setShowSuccess(true);
-        setTimeout(() => {
-          setShowSuccess(false);
-          startNewGame();
-        }, 4000); // Extended to 4 seconds to let the voice and music complete
-      } else {
-        // Calculate distance to goal and play beacon sound
-        const distance = Math.sqrt(
+      setShowSuccess(true);
+      setTimeout(() => {
+        setShowSuccess(false);
+        startNewGame();
+      }, 4000);
+    } else {
+      // Calculate distance to goal and play beacon sound
+      const distance = Math.sqrt(
+        Math.pow(
+          newState.player_position.x - newState.goal_position.x,
+          2
+        ) +
           Math.pow(
-            response.data.player_position.x - response.data.goal_position.x,
+            newState.player_position.y - newState.goal_position.y,
             2
-          ) +
-            Math.pow(
-              response.data.player_position.y - response.data.goal_position.y,
-              2
-            )
-        );
-        playBeaconSound(distance);
-      }
-    } catch (error) {
-      console.error('Error moving player:', error);
-      playWallHitSound(); // Play wall hit sound on invalid moves
+          )
+      );
+      playBeaconSound(distance);
     }
   };
 
@@ -308,7 +383,7 @@ export default function MazeGame({ onBackToLanding }: MazeGameProps) {
 
     window.addEventListener('keydown', handleGlobalKeyPress);
     return () => window.removeEventListener('keydown', handleGlobalKeyPress);
-  }, [gameId, gameState, moveCount]);
+  }, [mazeGame, gameState, moveCount]);
 
   if (loading || !gameState) {
     return <div>Loading...</div>;
