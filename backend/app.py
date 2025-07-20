@@ -17,13 +17,14 @@ from models import Token, User, UserResponse
 from config import settings
 
 logger = logging.getLogger(__name__)
-@asynccontextmanager
-async def lifespan(app: FastAPI):
-    await connect_to_mongo()
-    yield
-    await close_mongo_connection()
 
-app = FastAPI(title="EchoMaze Backend", lifespan=lifespan)
+# @asynccontextmanager
+# async def lifespan(app: FastAPI):
+#     await connect_to_mongo()
+#     yield
+#     await close_mongo_connection()
+
+app = FastAPI(title="EchoMaze Backend")
 
 # app = FastAPI(title="EchoMaze Backend")
 
