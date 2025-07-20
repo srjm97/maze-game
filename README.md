@@ -1,126 +1,161 @@
-# Maze Game
+# 🎮 Game Console
 
-A full-stack web-based maze game featuring user authentication, high scores, and multiple game modes. Built with a Python FastAPI backend and a modern React + Vite frontend.
+> **An inclusive web-based gaming platform for the visually impaired**, featuring audio-guided maze navigation, voice-controlled tile puzzles, and global scoreboards.
 
-## Table of Contents
-
-- [Features](#features)
-- [Tech Stack](#tech-stack)
-- [Getting Started](#getting-started)
-  - [Backend Setup](#backend-setup)
-  - [Frontend Setup](#frontend-setup)
-  - [Docker Setup](#docker-setup)
-- [Game Modes](#game-modes)
-- [API Endpoints](#api-endpoints)
-- [Project Structure](#project-structure)
-- [Contributing](#contributing)
-- [License](#license)
+Built with ❤️ using **FastAPI**, **React + Vite**, and advanced **speech technologies**.
 
 ---
 
-## Features
+## 🧠 What’s Inside?
 
-- 🧩 Maze and Tiles game modes
-- 🔒 User authentication (login/register)
-- 🏆 High scores leaderboard
-- 🎮 Responsive UI with animations
-- 🗣️ Voice command support
-- 📊 Game statistics and controls
-
-## Tech Stack
-
-- **Backend:** Python, FastAPI, SQLAlchemy
-- **Frontend:** React, Vite, TypeScript
-- **Database:** SQLite (default, configurable)
-- **Containerization:** Docker, Docker Compose
-- **Web Server:** Nginx
+* 🧩 **Maze Game** with real-time **audio cues** for navigation
+* 🗣️ **Tile Game** powered by **voice commands**
+* 📊 **Leaderboard system** for both **individual** and **global** scoring
+* 🔒 Seamless **user authentication**
+* 🎯 Intuitive and **accessible UX** with responsive design
+* 🧏‍♂️ Designed for **visually impaired players**
 
 ---
 
-## Getting Started
+## 🚀 Tech Stack
 
-### Backend Setup
+| Layer          | Tech Stack                                           |
+| -------------- | ---------------------------------------------------- |
+| **Backend**    | Python 3.13, FastAPI, SQLAlchemy                     |
+| **Frontend**   | Node.js 24, React + Vite, TypeScript                 |
+| **Database**   | SQLite (default, configurable)                       |
+| **Speech**     | [ElevenLabs](https://www.elevenlabs.io/) for TTS/STT |
+| **Deployment** | Docker, Docker Compose, Nginx                        |
 
-1. Navigate to the backend folder:
+---
+
+## 🛠️ Getting Started
+
+### 🔁 Prerequisites
+
+* **Python:** 3.13+
+* **Node.js:** 24.x+
+* **npm:** 9+
+
+---
+
+### 🐍 Backend Setup (FastAPI)
+
+1. Create a Python virtual environment:
+
    ```sh
-   cd backend
+   python3.13 -m venv venv
+   source venv/bin/activate
    ```
 2. Install dependencies:
+
    ```sh
    pip install -r requirements.txt
    ```
-3. Run the FastAPI server:
+3. Run the server:
+
    ```sh
-   uvicorn app:app --reload
+   python3 app.py
    ```
+4. Access the API at:
+   [http://localhost:8000](http://localhost:8000)
 
-### Frontend Setup
+---
 
-1. Navigate to the frontend folder:
+### 🌐 Frontend Setup (React + Vite)
+
+1. Navigate to the frontend directory:
+
    ```sh
    cd frontend
    ```
 2. Install dependencies:
+
    ```sh
    npm install
    ```
 3. Start the development server:
+
    ```sh
    npm run dev
    ```
-
-### Docker Setup
-
-1. Build and start all services:
-   ```sh
-   docker-compose up --build
-   ```
-2. Access the app at [http://localhost](http://localhost)
+4. Access the frontend at:
+   [http://localhost:5173](http://localhost:5173)
 
 ---
 
-## Game Modes
+### 🐳 Docker Setup
 
-- **Maze Game:** Navigate through randomly generated mazes.
-- **Tiles Game:** Solve tile-based puzzles with increasing difficulty.
+To run everything using Docker:
+
+```sh
+docker-compose up --build
+```
+
+Access the platform at: [http://localhost](http://localhost)
 
 ---
 
-## API Endpoints
+## 🕹️ Game Modes
 
-The backend exposes RESTful endpoints for authentication, game logic, and high scores. See `backend/app.py` and `backend/auth.py` for details.
+### 🎧 Maze Game
+
+Navigate procedurally generated mazes using **audio instructions**. Perfectly tailored for screen-free gameplay.
+
+### 🗣️ Tile Game
+
+Solve increasingly challenging tile puzzles using **natural voice commands**. Accessible and fun for everyone.
 
 ---
 
-## Project Structure
+## 🔗 API Endpoints
+
+Available for:
+
+* `POST /register` – User registration
+* `POST /login` – User login
+* `GET /score/global` – Global leaderboard
+* `GET /score/user` – Individual user scores
+* `POST /maze/submit` – Maze game results
+* `POST /tiles/submit` – Tile game results
+
+*Explore all routes in `backend/app.py` and `auth.py`.*
+
+---
+
+## 📁 Project Structure
 
 ```
-maze-game/
+Game-Console/
 ├── backend/         # FastAPI backend
-│   ├── games/       # Game logic modules
-│   ├── models.py    # Database models
-│   ├── auth.py      # Authentication logic
-│   └── ...
+│   ├── games/       # Game logic (maze, tiles)
+│   ├── models.py    # SQLAlchemy models
+│   ├── auth.py      # Auth routes
+│   └── app.py       # Main entry point
 ├── frontend/        # React + Vite frontend
-│   ├── src/         # Source code
+│   ├── src/         # App source files
 │   ├── public/      # Static assets
-│   └── ...
-├── Dockerfiles/     # Dockerfiles for backend & frontend
+├── Dockerfiles/     # Docker configurations
 ├── docker-compose.yml
-├── nginx/           # Nginx config
+├── nginx/           # Nginx reverse proxy config
 └── README.md
 ```
 
 ---
 
-## Contributing
+## 🌍 Accessibility Matters
 
-Contributions are welcome! Please open issues or submit pull requests for improvements and bug fixes.
+Game Console empowers users with visual impairments to **engage and enjoy** gaming like never before. Using **text-to-speech** and **speech-to-text** via ElevenLabs, we've crafted a **truly inclusive** experience.
+
+---
+
+## 🤝 Contributing
+
+We welcome contributions!
+Feel free to fork the repo, create issues, and submit pull requests.
 
 ---
 
-## License
+## 📄 License
 
-This project is licensed under the MIT License.
-
----
+This project is licensed under the [MIT License](LICENSE).
