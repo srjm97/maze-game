@@ -1,5 +1,6 @@
 // VoiceCommand.tsx
 import React, { useState, useEffect } from 'react';
+import  '../../styles/VoiceCommand.css';
 
 const TILES_CONFIG = {
     DIFFICULTIES: {
@@ -103,10 +104,14 @@ export function VoiceCommand({
     }, [isRecording, mediaRecorder, toggleRecord]);
 
     return (
-        <div>
-            <div>
-                {isRecording ? 'Recording... (Press Enter to stop)' : 'Press Enter to speak'}
-            </div>
-        </div>
+        <div className="voice-command">
+  <button className={`mic-button ${isRecording ? 'recording' : ''}`} onClick={toggleRecord}>
+    🎤
+  </button>
+  <div className="status-text">
+    {isRecording ? 'Recording... (Press Enter to stop)' : 'Press Enter to speak'}
+  </div>
+</div>
+
     );
 }
