@@ -10,7 +10,7 @@ class Database:
 
 db = Database()
 
-def connect_to_mongo_sync():
+def connect_to_mongo():
     if db.client is None:
         try:
             db.client = AsyncIOMotorClient(settings.MONGODB_URL)
@@ -22,7 +22,7 @@ def connect_to_mongo_sync():
 
 async def get_database():
     if db.database is None:
-        connect_to_mongo_sync()
+        connect_to_mongo()
     return db.database
 
 async def close_mongo_connection():
