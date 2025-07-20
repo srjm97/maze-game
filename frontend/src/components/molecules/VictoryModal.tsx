@@ -1,6 +1,7 @@
 import axios from 'axios';
 import React, { useEffect } from 'react';
 
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000';
 interface VictoryModalProps {
   isVisible: boolean;
   moveCount: number;
@@ -32,7 +33,7 @@ export const VictoryModal: React.FC<VictoryModalProps> = ({
   useEffect(() => {
   
     axios
-      .post('http://localhost:8000/score/add', null, {
+      .post(`${API_BASE_URL}/score/add`, null, {
         params: {
           user_email: userEmail,
           game_name: `${gameType}_${difficulty || 'easy'}`,
