@@ -28,7 +28,7 @@ app = FastAPI(title="EchoMaze Backend", lifespan=lifespan)
 # Configure CORS
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[settings.FRONTEND_BASE_URL, "https://maze-game-murex.vercel.app"],  
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
