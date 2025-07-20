@@ -1,7 +1,6 @@
 from motor.motor_asyncio import AsyncIOMotorClient
 from config import settings
 import logging
-import asyncio
 
 logger = logging.getLogger(__name__)
 
@@ -11,7 +10,7 @@ class Database:
 
 db = Database()
 
-async def connect_to_mongo():
+def connect_to_mongo_sync():
     if db.client is None:
         try:
             db.client = AsyncIOMotorClient(settings.MONGODB_URL)
@@ -22,9 +21,8 @@ async def connect_to_mongo():
             raise
 
 async def get_database():
-    # Ensure connection is ready
     if db.database is None:
-        await connect_to_mongo()
+        connect_to_mongo_sync()
     return db.database
 
 async def close_mongo_connection():
