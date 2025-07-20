@@ -1,6 +1,6 @@
 // VoiceCommand.tsx
 import React, { useState, useEffect } from 'react';
-import '../../styles/VoiceCommand.css';
+import '../../styles/voiceCommand.css';
 
 const TILES_CONFIG = {
   DIFFICULTIES: {
