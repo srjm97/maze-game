@@ -337,12 +337,17 @@ export default function HighScores({ onBackToLanding }: HighScoresProps) {
     return (
       <div
         style={{
-          minHeight: '100vh',
+          width: '100vw',
+          height: '100vh',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
           backgroundColor: '#1a1b1e',
           color: '#fff',
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          zIndex: 9999,
         }}
       >
         <div style={{ textAlign: 'center' }}>
@@ -361,12 +366,17 @@ export default function HighScores({ onBackToLanding }: HighScoresProps) {
     return (
       <div
         style={{
-          minHeight: '100vh',
+          width: '100vw',
+          height: '100vh',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
           backgroundColor: '#1a1b1e',
           color: '#fff',
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          zIndex: 9999,
         }}
       >
         <div style={{ textAlign: 'center' }}>
@@ -393,10 +403,15 @@ export default function HighScores({ onBackToLanding }: HighScoresProps) {
   return (
     <div
       style={{
-        minHeight: '100vh',
+        width: '100vw',
+        height: '100vh',
         backgroundColor: '#1a1b1e',
         color: '#fff',
-        padding: '2rem',
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        zIndex: 9999,
+        overflow: 'auto',
       }}
     >
       <style>
@@ -415,12 +430,29 @@ export default function HighScores({ onBackToLanding }: HighScoresProps) {
           .slide-in {
             animation: slideIn 0.8s ease-out;
           }
+          
+          /* Custom scrollbar for the full screen container */
+          div::-webkit-scrollbar {
+            width: 8px;
+          }
+          div::-webkit-scrollbar-track {
+            background: #282c34;
+          }
+          div::-webkit-scrollbar-thumb {
+            background: #61dafb;
+            border-radius: 4px;
+          }
+          div::-webkit-scrollbar-thumb:hover {
+            background: #4a9ac7;
+          }
         `}
       </style>
 
-      <BackButton onClick={onBackToLanding} />
+      <div style={{ padding: '1rem' }}>
+        <BackButton onClick={onBackToLanding} />
+      </div>
 
-      <div style={{ maxWidth: '1200px', margin: '0 auto' }} className="fade-in">
+      <div style={{ padding: '0 2rem 2rem 2rem' }} className="fade-in">
         <div style={{ textAlign: 'center', marginBottom: '3rem' }}>
           <h1
             style={{
@@ -477,7 +509,7 @@ export default function HighScores({ onBackToLanding }: HighScoresProps) {
         </div>
 
         {/* Content based on selected tab */}
-        <div className="slide-in">
+        <div className="slide-in" style={{ maxWidth: '1400px', margin: '0 auto' }}>
           {selectedTab === 'global' ? (
             <div>
               {renderLeaderboard(
