@@ -4,6 +4,7 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 
 import GameTile from './components/atoms/GameTile';
+import StyledButton from './components/atoms/StyledButton';
 
 interface LandingPageProps {
   onGameSelect: (gameType: 'maze' | 'tiles' | 'highscores') => void;
@@ -94,9 +95,10 @@ export default function LandingPage({ onGameSelect }: LandingPageProps) {
           />
         ))}
       </div>
-      <button onClick={() => onGameSelect('highscores')}>
-        View High Scores
-      </button>
+      <StyledButton
+  label="View High Scores"
+  onClick={() => onGameSelect('highscores')}
+/>
 
       <style>
         {`
