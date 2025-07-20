@@ -297,6 +297,7 @@ export default function LoginComponent({
         )}
 
         <StyledButton
+        style={{ width: '100%' }}
           label={
             loading ? (
               <FontAwesomeIcon icon={faSpinner} spin />
