@@ -8,6 +8,7 @@ from fastapi.responses import RedirectResponse
 import uvicorn
 import random
 from elevenlabs import ElevenLabs
+import re
 
 from auth import GoogleAuth, create_access_token, get_current_user
 from database import close_mongo_connection, connect_to_mongo, get_database
@@ -207,6 +208,28 @@ async def get_top_10_scores(
         })
     return {"game_name": game_name, "top_10_scores": top_scores}
 
+# Word to number mapping
+WORD_TO_NUMBER = {
+    'zero': '0', 'one': '1', 'two': '2', 'three': '3', 'four': '4',
+    'five': '5', 'six': '6', 'seven': '7', 'eight': '8', 'nine': '9',
+    'ten': '10', 'eleven': '11', 'twelve': '12', 'thirteen': '13',
+    'fourteen': '14', 'fifteen': '15', 'sixteen': '16', 'seventeen': '17',
+    'eighteen': '18', 'nineteen': '19', 'twenty': '20'
+}
+
+def convert_words_to_numbers(text: str) -> str:
+    """Convert spoken numbers in text to digits"""
+    # Convert to lowercase for matching
+    text_lower = text.lower()
+    
+    # Replace word numbers with digits
+    for word, digit in WORD_TO_NUMBER.items():
+        # Use word boundaries to avoid partial matches
+        pattern = r'\b' + re.escape(word) + r'\b'
+        text_lower = re.sub(pattern, digit, text_lower)
+    
+    return text_lower
+
 @app.post("/audio")
 async def handle_audio(file: UploadFile = File(...)):
     client = ElevenLabs(api_key=settings.ELEVEN_LABS_KEY)
@@ -217,8 +240,18 @@ async def handle_audio(file: UploadFile = File(...)):
     response = client.speech_to_text.convert(
         model_id="scribe_v1",
         file=contents,
+        language_code="en",
     )
-    return response
+    
+    # Convert the transcribed text to replace word numbers with digits
+    original_text = response.text if hasattr(response, 'text') else str(response)
+    converted_text = convert_words_to_numbers(original_text)
+    
+    print(f"Original: {original_text}")
+    print(f"Converted: {converted_text}")
+    
+    # Return the converted text
+    return {"text": converted_text}
 
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=8000)
