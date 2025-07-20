@@ -102,19 +102,19 @@ async def google_callback(
                 result = await db.users.insert_one(new_user.model_dump(by_alias=True))
                 user_id = str(result.inserted_id)
         
-        # Create JWT token
-        access_token = create_access_token(data={"sub": user_id})
-        
-        # Get user for response
-        user = await db.users.find_one({"_id": ObjectId(user_id)})
-        user_response = UserResponse(
-            id=str(user["_id"]),
-            email=user["email"],
-            name=user["name"],
-            picture=user.get("picture"),
-            created_at=user["created_at"]
-        )   
-        return RedirectResponse(url=f"{settings.FRONTEND_BASE_URL}/?token={access_token}")
+            # Create JWT token
+            access_token = create_access_token(data={"sub": user_id})
+            
+            # Get user for response
+            user = await db.users.find_one({"_id": ObjectId(user_id)})
+            user_response = UserResponse(
+                id=str(user["_id"]),
+                email=user["email"],
+                name=user["name"],
+                picture=user.get("picture"),
+                created_at=user["created_at"]
+            )   
+            return RedirectResponse(url=f"{settings.FRONTEND_BASE_URL}/?token={access_token}")
         
     except Exception as e:
         logger.error(f"Google callback error: {e}")
