@@ -27,7 +27,7 @@ app = FastAPI(title="EchoMaze Backend", lifespan=lifespan)
 # Configure CORS
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Vite's default port
+    allow_origins=[settings.FRONTEND_BASE_URL],  
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
