@@ -73,6 +73,7 @@ async def get_current_user(
     db = Depends(get_database)
 ) -> UserResponse:
     """Get current authenticated user"""
+    print(f"Received credentials: {credentials}")
     token = credentials.credentials
     
     credentials_exception = HTTPException(
@@ -83,15 +84,23 @@ async def get_current_user(
     
     try:
         payload = jwt.decode(token, settings.JWT_SECRET_KEY, algorithms=[settings.JWT_ALGORITHM])
+        print(f"Decoded payload: {payload}")
         user_id: str = payload.get("sub")
         if user_id is None:
+            print("No user_id in payload")
             raise credentials_exception
-    except JWTError:
+    except JWTError as e:
+        print(f"JWT decode error: {e}")
         raise credentials_exception
     
-    user = await db.users.find_one({"_id": ObjectId(user_id)})
-    if user is None:
-        raise credentials_exception
+    try:
+        user = await db.users.find_one({"_id": ObjectId(user_id)})
+        print(f"Fetched user from DB: {user}")
+        if user is None:
+            raise credentials_exception
+    except Exception as e:
+        print(f"Error fetching user from DB: {e}")
+        raise HTTPException(status_code=500, detail="Database error")
     
     return UserResponse(
         id=str(user["_id"]),
