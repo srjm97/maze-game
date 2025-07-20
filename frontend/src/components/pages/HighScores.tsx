@@ -155,6 +155,8 @@ export default function HighScores({ onBackToLanding }: HighScoresProps) {
         marginBottom: '2rem',
         border: '1px solid #404258',
         boxShadow: '0 4px 6px rgba(0, 0, 0, 0.3)',
+        width: `${title=="Maze Game Leaderboard"?'800px':'auto'}`,
+        placeSelf: `${title=="Maze Game Leaderboard"?'center':'auto'}`,
       }}
     >
       <div
@@ -509,7 +511,7 @@ export default function HighScores({ onBackToLanding }: HighScoresProps) {
         </div>
 
         {/* Content based on selected tab */}
-        <div className="slide-in" style={{ maxWidth: '1400px', margin: '0 auto' }}>
+        <div className="slide-in" style={{ maxWidth: '1400px', margin: '0 auto' , placeContent: 'center' }}>
           {selectedTab === 'global' ? (
             <div>
               {renderLeaderboard(

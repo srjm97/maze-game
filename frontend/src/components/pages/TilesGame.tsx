@@ -161,6 +161,9 @@ export default function TilesGame({ onBackToMenu }: TilesGameProps) {
             ? `🏆 NEW RECORD! You found all ${matchCount} pairs! 🏆`
             : `You found all ${matchCount} pairs!`
         }
+        gameType="tiles"
+        difficulty={difficulty}
+        
       />
       <BackButton onClick={onBackToMenu} />
 

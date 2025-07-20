@@ -13,6 +13,7 @@ import { speakMessage } from '../../utils/speakmessage';
 import { ScoreDisplay } from '../molecules/ScoreDisplay';
 import { getBestMazeScore, addMazeScore } from '../../utils/highScoreUtils';
 import BackButton from '../atoms/BackButton';
+import { VictoryModal } from '../molecules/VictoryModal';
 
 const API_BASE_URL =
   import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000';
@@ -391,35 +392,18 @@ export default function MazeGame({ onBackToLanding }: MazeGameProps) {
      <BackButton onClick={onBackToLanding} />
 
       {showSuccess && (
-        <div className="success-overlay">
-          <div className="success-message">
-            <div className="victory-text">
-              {isNewRecord ? '🏆 NEW RECORD! 🏆' : '🎉 You have won the game! 🎉'}
-            </div>
-            <h2
-              style={{
-                color: '#61dafb',
-                marginBottom: '1rem',
-                fontSize: '1.8rem',
-              }}
-            >
-              Congratulations!
-            </h2>
-            <p style={{ fontSize: '1.2rem', color: '#fff' }}>
-              You completed the maze in {moveCount} moves!
-            </p>
-            {isNewRecord && (
-              <p style={{ fontSize: '1.1rem', color: '#ffd700', marginTop: '0.5rem' }}>
-                This is your best score!
-              </p>
-            )}
-            <p
-              style={{ fontSize: '1rem', color: '#8b949e', marginTop: '1rem' }}
-            >
-              Starting a new game in a moment...
-            </p>
-          </div>
-        </div>
+        <VictoryModal
+                isVisible={showSuccess}
+                moveCount={moveCount}
+                customMessage={
+                  isNewRecord
+                    ? `🏆 NEW RECORD! You reached in  ${moveCount} pairs! 🏆`
+                    : `You found all ${moveCount} pairs!`
+                }
+                gameType="maze"
+                difficulty="easy"
+                
+              />
       )}
       
       <h1
