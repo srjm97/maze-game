@@ -1,5 +1,5 @@
 // VoiceCommand.tsx
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 const TILES_CONFIG = {
     DIFFICULTIES: {
@@ -82,11 +82,24 @@ export function VoiceCommand({
         setIsRecording(!isRecording);
     };
 
+    useEffect(() => {
+        const handleKeyPress = (event: KeyboardEvent) => {
+            if (event.key === 'Enter') {
+                event.preventDefault();
+                event.stopPropagation();
+                toggleRecord();
+            }
+        };
+
+        window.addEventListener('keydown', handleKeyPress, true);
+        return () => window.removeEventListener('keydown', handleKeyPress, true);
+    }, [isRecording, mediaRecorder, toggleRecord]);
+
     return (
         <div>
-            <button onClick={toggleRecord}>
-                {isRecording ? 'Stop' : 'Speak'}
-            </button>
+            <div>
+                {isRecording ? 'Recording... (Press Enter to stop)' : 'Press Enter to speak'}
+            </div>
         </div>
     );
 }
