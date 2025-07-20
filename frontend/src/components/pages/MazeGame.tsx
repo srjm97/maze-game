@@ -223,7 +223,7 @@ export default function MazeGame({ onBackToLanding }: MazeGameProps) {
 
     try {
       const response = await axios.post(
-        `http://localhost:8000/game/${gameId}/move`,
+        `${API_BASE_URL}/game/${gameId}/move`,
         {
           direction,
         }

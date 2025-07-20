@@ -9,7 +9,8 @@ const TILES_CONFIG = {
     hard: { width: 4, height: 6 },
   },
 };
-
+const API_BASE_URL =
+  import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000';
 export function VoiceCommand({
   tiles,
   difficulty,
@@ -49,7 +50,7 @@ export function VoiceCommand({
     try {
       const formData = new FormData();
       formData.append('file', blob, 'recording.webm');
-      const res = await fetch('http://localhost:8000/audio', {
+      const res = await fetch(`${API_BASE_URL}/audio`, {
         method: 'POST',
         body: formData,
       });

@@ -28,6 +28,8 @@ interface LoginComponentProps {
   onLogout: () => void;
 }
 
+const API_BASE_URL =
+  import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000';
 export default function LoginComponent({
   onLogin,
   onLogout,
@@ -74,7 +76,7 @@ export default function LoginComponent({
     try {
       // Decode the JWT token to get user info
       // Or make a simple API call to verify the token and get user data
-      const response = await fetch('http://localhost:8000/auth/me', {
+      const response = await fetch(`${API_BASE_URL}/auth/me`, {
         headers: {
           Authorization: `Bearer ${token}`,
           'Content-Type': 'application/json',
@@ -111,7 +113,7 @@ export default function LoginComponent({
     setError('');
 
     try {
-      const response = await fetch('http://localhost:8000/auth/google/login');
+      const response = await fetch(`${API_BASE_URL}/auth/google/login`);
       if (!response.ok) {
         throw new Error('Failed to get login URL');
       }
@@ -128,7 +130,7 @@ export default function LoginComponent({
     try {
       const token = sessionStorage.getItem('access_token');
       if (token) {
-        await fetch('http://localhost:8000/auth/logout', {
+        await fetch(`${API_BASE_URL}/auth/logout`, {
           method: 'POST',
           headers: {
             Authorization: `Bearer ${token}`,
