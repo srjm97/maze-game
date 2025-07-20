@@ -13,6 +13,7 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import axios from 'axios';
 import BackButton from '../atoms/BackButton';
+import StyledButton from '../atoms/StyledButton';
 
 const API_BASE_URL =
   import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000';
@@ -682,29 +683,20 @@ export default function HighScores({ onBackToLanding }: HighScoresProps) {
 
         {/* Refresh Button */}
         <div style={{ textAlign: 'center', marginTop: '3rem' }}>
-          <button
+          <StyledButton
             onClick={fetchAllScores}
             disabled={loading}
-            style={{
-              padding: '1rem 2rem',
-              background: 'linear-gradient(135deg, #61dafb 0%, #2c5282 100%)',
-              color: '#fff',
-              border: 'none',
-              borderRadius: '10px',
-              cursor: loading ? 'not-allowed' : 'pointer',
-              transition: 'all 0.3s ease',
-              fontSize: '1rem',
-              fontWeight: 'bold',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '0.5rem',
-              margin: '0 auto',
-              opacity: loading ? 0.7 : 1,
-            }}
-          >
-            <FontAwesomeIcon icon={faRefresh} spin={loading} />
-            {loading ? 'Refreshing...' : 'Refresh Scores'}
-          </button>
+            label={
+              loading ? (
+                <FontAwesomeIcon icon={faRefresh} spin />
+              ) : (
+                <>
+                <FontAwesomeIcon icon={faRefresh} spin />
+                Refresh Scores
+                </>
+              )
+            }
+          />
         </div>
       </div>
     </div>

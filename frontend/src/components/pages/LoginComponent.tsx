@@ -276,7 +276,7 @@ export default function LoginComponent({
           padding: '3rem 2rem',
           borderRadius: '15px',
           border: '2px solid #61dafb20',
-          width: '30%',
+          width: '25%',
           textAlign: 'center',
           animation: 'fadeInUp 0.8s ease-out 0.2s backwards',
         }}
