@@ -34,8 +34,22 @@ export const useTilesGame = () => {
         const symbol = symbolData.symbol;
         const symbolName = symbolData.name;
         newTiles.push(
-          { color, symbol, symbolName, isRevealed: false, isMatched: false, pairId: i },
-          { color, symbol, symbolName, isRevealed: false, isMatched: false, pairId: i }
+          {
+            color,
+            symbol,
+            symbolName,
+            isRevealed: false,
+            isMatched: false,
+            pairId: i,
+          },
+          {
+            color,
+            symbol,
+            symbolName,
+            isRevealed: false,
+            isMatched: false,
+            pairId: i,
+          }
         );
       }
 

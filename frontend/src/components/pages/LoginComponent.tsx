@@ -1,7 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faGoogle } from '@fortawesome/free-brands-svg-icons';
-import { faSpinner, faUser, faSignOutAlt, faGamepad } from '@fortawesome/free-solid-svg-icons';
+import {
+  faSpinner,
+  faUser,
+  faSignOutAlt,
+  faGamepad,
+} from '@fortawesome/free-solid-svg-icons';
+import StyledButton from '../atoms/StyledButton';
 
 interface User {
   id: string;
@@ -22,7 +28,12 @@ interface LoginComponentProps {
   onLogout: () => void;
 }
 
-export default function LoginComponent({ onLogin, onLogout }: LoginComponentProps) {
+const API_BASE_URL =
+  import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000';
+export default function LoginComponent({
+  onLogin,
+  onLogout,
+}: LoginComponentProps) {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string>('');
@@ -31,7 +42,7 @@ export default function LoginComponent({ onLogin, onLogout }: LoginComponentProp
     // Check if user is already logged in (using in-memory storage)
     const storedUser = sessionStorage.getItem('user_data');
     const storedToken = sessionStorage.getItem('access_token');
-    
+
     if (storedToken && storedUser) {
       try {
         const parsedUser = JSON.parse(storedUser);
@@ -48,7 +59,7 @@ export default function LoginComponent({ onLogin, onLogout }: LoginComponentProp
     const urlParams = new URLSearchParams(window.location.search);
     const token = urlParams.get('token');
     const error = urlParams.get('error');
-    
+
     if (token) {
       handleTokenFromCallback(token);
     } else if (error) {
@@ -61,13 +72,13 @@ export default function LoginComponent({ onLogin, onLogout }: LoginComponentProp
   const handleTokenFromCallback = async (token: string) => {
     setLoading(true);
     setError('');
-    
+
     try {
       // Decode the JWT token to get user info
       // Or make a simple API call to verify the token and get user data
-      const response = await fetch('http://localhost:8000/auth/me', {
+      const response = await fetch(`${API_BASE_URL}/auth/me`, {
         headers: {
-          'Authorization': `Bearer ${token}`,
+          Authorization: `Bearer ${token}`,
           'Content-Type': 'application/json',
         },
       });
@@ -77,14 +88,14 @@ export default function LoginComponent({ onLogin, onLogout }: LoginComponentProp
       }
 
       const userData = await response.json();
-      
+
       // Store tokens and user data in sessionStorage
       sessionStorage.setItem('access_token', token);
       sessionStorage.setItem('user_data', JSON.stringify(userData));
-      
+
       setUser(userData);
       onLogin(userData);
-      
+
       // Clean up URL
       window.history.replaceState({}, document.title, window.location.pathname);
     } catch (err) {
@@ -100,13 +111,13 @@ export default function LoginComponent({ onLogin, onLogout }: LoginComponentProp
   const handleGoogleLogin = async () => {
     setLoading(true);
     setError('');
-    
+
     try {
-      const response = await fetch('http://localhost:8000/auth/google/login');
+      const response = await fetch(`${API_BASE_URL}/auth/google/login`);
       if (!response.ok) {
         throw new Error('Failed to get login URL');
       }
-      
+
       const data = await response.json();
       window.location.href = data.auth_url;
     } catch (err) {
@@ -119,10 +130,10 @@ export default function LoginComponent({ onLogin, onLogout }: LoginComponentProp
     try {
       const token = sessionStorage.getItem('access_token');
       if (token) {
-        await fetch('http://localhost:8000/auth/logout', {
+        await fetch(`${API_BASE_URL}/auth/logout`, {
           method: 'POST',
           headers: {
-            'Authorization': `Bearer ${token}`,
+            Authorization: `Bearer ${token}`,
             'Content-Type': 'application/json',
           },
         });
@@ -197,28 +208,10 @@ export default function LoginComponent({ onLogin, onLogout }: LoginComponentProp
               {user.email}
             </div>
           </div>
-          <button
+          <StyledButton
             onClick={handleLogout}
-            style={{
-              background: 'transparent',
-              border: '1px solid #61dafb30',
-              borderRadius: '8px',
-              color: '#61dafb',
-              padding: '8px',
-              cursor: 'pointer',
-              transition: 'all 0.2s ease',
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.background = '#61dafb20';
-              e.currentTarget.style.borderColor = '#61dafb';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.background = 'transparent';
-              e.currentTarget.style.borderColor = '#61dafb30';
-            }}
-          >
-            <FontAwesomeIcon icon={faSignOutAlt} />
-          </button>
+            label={<FontAwesomeIcon icon={faSignOutAlt} />}
+          />
         </div>
       </div>
     );
@@ -274,7 +267,8 @@ export default function LoginComponent({ onLogin, onLogout }: LoginComponentProp
             margin: '0 auto',
           }}
         >
-          Sign in with your Google account to start playing games and save your progress
+          Sign in with your Google account to start playing games and save your
+          progress
         </p>
       </div>
 
@@ -284,7 +278,7 @@ export default function LoginComponent({ onLogin, onLogout }: LoginComponentProp
           padding: '3rem 2rem',
           borderRadius: '15px',
           border: '2px solid #61dafb20',
-          minWidth: '400px',
+          width: '25%',
           textAlign: 'center',
           animation: 'fadeInUp 0.8s ease-out 0.2s backwards',
         }}
@@ -304,48 +298,20 @@ export default function LoginComponent({ onLogin, onLogout }: LoginComponentProp
           </div>
         )}
 
-        <button
+        <StyledButton
+        style={{ width: '100%' }}
+          label={
+            loading ? (
+              <FontAwesomeIcon icon={faSpinner} spin />
+            ) : (
+              <>
+                <FontAwesomeIcon icon={faGoogle} />{' '}
+                {loading ? 'Signing in...' : 'Continue with Google'}
+              </>
+            )
+          }
           onClick={handleGoogleLogin}
-          disabled={loading}
-          style={{
-            width: '100%',
-            padding: '16px 24px',
-            background: loading ? '#8b949e' : '#4285f4',
-            border: 'none',
-            borderRadius: '12px',
-            color: '#fff',
-            fontSize: '16px',
-            fontWeight: 'bold',
-            cursor: loading ? 'not-allowed' : 'pointer',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            gap: '12px',
-            transition: 'all 0.3s ease',
-            boxShadow: loading ? 'none' : '0 4px 12px rgba(66, 133, 244, 0.3)',
-          }}
-          onMouseEnter={(e) => {
-            if (!loading) {
-              e.currentTarget.style.background = '#3367d6';
-              e.currentTarget.style.transform = 'translateY(-2px)';
-              e.currentTarget.style.boxShadow = '0 6px 16px rgba(66, 133, 244, 0.4)';
-            }
-          }}
-          onMouseLeave={(e) => {
-            if (!loading) {
-              e.currentTarget.style.background = '#4285f4';
-              e.currentTarget.style.transform = 'translateY(0)';
-              e.currentTarget.style.boxShadow = '0 4px 12px rgba(66, 133, 244, 0.3)';
-            }
-          }}
-        >
-          {loading ? (
-            <FontAwesomeIcon icon={faSpinner} spin />
-          ) : (
-            <FontAwesomeIcon icon={faGoogle} />
-          )}
-          {loading ? 'Signing in...' : 'Continue with Google'}
-        </button>
+        />
 
         <div
           style={{

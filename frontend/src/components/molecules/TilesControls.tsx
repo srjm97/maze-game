@@ -50,7 +50,7 @@ export const TilesControls: React.FC<TilesControlsProps> = ({
           Matches: {matchCount}/{totalPairs}
         </div>
       </div>
-          <GameButton onClick={onNewGame}>New Game</GameButton>
+      <GameButton onClick={onNewGame}>New Game</GameButton>
 
       <div
         style={{

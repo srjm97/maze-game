@@ -1,17 +1,51 @@
-import React from 'react';
+import axios from 'axios';
+import React, { useEffect } from 'react';
 
+const API_BASE_URL =
+  import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000';
 interface VictoryModalProps {
   isVisible: boolean;
   moveCount: number;
   customMessage?: string;
+  gameType: 'maze' | 'tiles';
+  difficulty?: string;
 }
 
 export const VictoryModal: React.FC<VictoryModalProps> = ({
   isVisible,
   moveCount,
   customMessage,
+  gameType = 'maze',
+  difficulty = 'easy',
 }) => {
   if (!isVisible) return null;
+  const userEmail = (() => {
+    try {
+      const userData = sessionStorage.getItem('user_data');
+      if (!userData) return 'guest@unknown.local';
+      const parsed = JSON.parse(userData);
+      return parsed?.email || 'guest@unknown.local';
+    } catch {
+      return 'guest@unknown.local';
+    }
+  })();
+
+  useEffect(() => {
+    axios
+      .post(`${API_BASE_URL}/score/add`, null, {
+        params: {
+          user_email: userEmail,
+          game_name: `${gameType}_${difficulty || 'easy'}`,
+          score: moveCount,
+        },
+      })
+      .then((res) => {
+        console.log('Score submitted:', res.data);
+      })
+      .catch((err) => {
+        console.error('Error submitting score:', err);
+      });
+  }, []);
 
   return (
     <div className="success-overlay">

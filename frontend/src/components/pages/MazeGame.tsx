@@ -13,6 +13,7 @@ import { speakMessage } from '../../utils/speakmessage';
 import { ScoreDisplay } from '../molecules/ScoreDisplay';
 import { getBestMazeScore, addMazeScore } from '../../utils/highScoreUtils';
 import BackButton from '../atoms/BackButton';
+import { VictoryModal } from '../molecules/VictoryModal';
 
 const API_BASE_URL =
   import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000';
@@ -193,7 +194,7 @@ export default function MazeGame({ onBackToLanding }: MazeGameProps) {
       setMoveCount(0); // Reset move count for new game
       setIsNewRecord(false); // Reset new record flag
       setShowSuccess(false); // Hide success message
-      
+
       const response = await axios.post(`${API_BASE_URL}/game`, {
         width: 15,
         height: 15,
@@ -222,7 +223,7 @@ export default function MazeGame({ onBackToLanding }: MazeGameProps) {
 
     try {
       const response = await axios.post(
-        `http://localhost:8000/game/${gameId}/move`,
+        `${API_BASE_URL}/game/${gameId}/move`,
         {
           direction,
         }
@@ -239,16 +240,16 @@ export default function MazeGame({ onBackToLanding }: MazeGameProps) {
       setMoveCount(newMoveCount);
 
       if (response.data.game_over) {
-
         const scoreResult = addMazeScore(newMoveCount);
         setIsNewRecord(scoreResult.isNewRecord);
-        
+
         setBestScore(getBestMazeScore());
-        
+
         playVictoryMusic();
-        speakMessage(scoreResult.isNewRecord ? 
-          `${messages.victory} New record with ${newMoveCount} moves!` : 
-          messages.victory
+        speakMessage(
+          scoreResult.isNewRecord
+            ? `${messages.victory} New record with ${newMoveCount} moves!`
+            : messages.victory
         );
         setShowSuccess(true);
         setTimeout(() => {
@@ -388,40 +389,22 @@ export default function MazeGame({ onBackToLanding }: MazeGameProps) {
         `}
       </style>
 
-     <BackButton onClick={onBackToLanding} />
+      <BackButton onClick={onBackToLanding} />
 
       {showSuccess && (
-        <div className="success-overlay">
-          <div className="success-message">
-            <div className="victory-text">
-              {isNewRecord ? '🏆 NEW RECORD! 🏆' : '🎉 You have won the game! 🎉'}
-            </div>
-            <h2
-              style={{
-                color: '#61dafb',
-                marginBottom: '1rem',
-                fontSize: '1.8rem',
-              }}
-            >
-              Congratulations!
-            </h2>
-            <p style={{ fontSize: '1.2rem', color: '#fff' }}>
-              You completed the maze in {moveCount} moves!
-            </p>
-            {isNewRecord && (
-              <p style={{ fontSize: '1.1rem', color: '#ffd700', marginTop: '0.5rem' }}>
-                This is your best score!
-              </p>
-            )}
-            <p
-              style={{ fontSize: '1rem', color: '#8b949e', marginTop: '1rem' }}
-            >
-              Starting a new game in a moment...
-            </p>
-          </div>
-        </div>
+        <VictoryModal
+          isVisible={showSuccess}
+          moveCount={moveCount}
+          customMessage={
+            isNewRecord
+              ? `🏆 NEW RECORD! You reached in  ${moveCount} pairs! 🏆`
+              : `You found all ${moveCount} pairs!`
+          }
+          gameType="maze"
+          difficulty="easy"
+        />
       )}
-      
+
       <h1
         style={{
           fontSize: '2.5rem',
@@ -440,8 +423,9 @@ export default function MazeGame({ onBackToLanding }: MazeGameProps) {
         bestScore={bestScore}
         isNewRecord={isNewRecord && showSuccess}
         gameType="maze"
+        difficulty=""
       />
-      
+
       <div
         style={{
           position: 'relative',
@@ -507,7 +491,7 @@ export default function MazeGame({ onBackToLanding }: MazeGameProps) {
           ))
         )}
       </div>
-      
+
       <div
         style={{
           display: 'flex',
@@ -534,7 +518,7 @@ export default function MazeGame({ onBackToLanding }: MazeGameProps) {
           New Game
         </button>
       </div>
-      
+
       <div
         style={{
           marginTop: '20px',

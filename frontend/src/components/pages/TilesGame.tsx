@@ -14,7 +14,7 @@ import { VoiceCommand } from '../molecules/VoiceComponent';
 interface TilesGameProps {
   onBackToMenu: () => void;
 }
-const BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000';
+
 export default function TilesGame({ onBackToMenu }: TilesGameProps) {
   const {
     tiles,
@@ -161,6 +161,8 @@ export default function TilesGame({ onBackToMenu }: TilesGameProps) {
             ? `🏆 NEW RECORD! You found all ${matchCount} pairs! 🏆`
             : `You found all ${matchCount} pairs!`
         }
+        gameType="tiles"
+        difficulty={difficulty}
       />
       <BackButton onClick={onBackToMenu} />
 
@@ -203,9 +205,10 @@ export default function TilesGame({ onBackToMenu }: TilesGameProps) {
       />
 
       <VoiceCommand
-      tiles = {tiles}
-      difficulty = {difficulty}
-      handleTileClick =  {handleTileClick}
+        tiles={tiles}
+        difficulty={difficulty}
+        handleTileClick={handleTileClick}
+        initializeGame={initializeGame}
       />
     </div>
   );

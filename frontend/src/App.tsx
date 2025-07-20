@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { MantineProvider } from '@mantine/core';
 
-import LoginComponent from './components/molecules/LoginComponent';
+import LoginComponent from './components/pages/LoginComponent';
 import LandingPage from './LandingPage';
 import MazeGame from './components/pages/MazeGame';
 import TilesGame from './components/pages/TilesGame';
+import HighScores from './components/pages/HighScores'; // Import the HighScores component
 
-type GameType = 'maze' | 'tiles' | null;
+type GameType = 'maze' | 'tiles' | 'highscores' | null;
 
 interface User {
   id: string;
@@ -69,6 +70,10 @@ function App() {
         ) : currentGame === 'tiles' ? (
           <div style={{ animation: 'fadeIn 0.5s ease' }}>
             <TilesGame onBackToMenu={handleBackToMenu} />
+          </div>
+        ) : currentGame === 'highscores' ? (
+          <div style={{ animation: 'fadeIn 0.5s ease' }}>
+            <HighScores onBackToLanding={handleBackToMenu} />
           </div>
         ) : (
           <LandingPage onGameSelect={handleGameSelect} />

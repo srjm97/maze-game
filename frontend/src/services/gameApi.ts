@@ -1,7 +1,7 @@
 import axios from 'axios';
 import type { GameState } from '../types/gameTypes';
 
-const API_BASE_URL = 'http://localhost:8000';
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000';
 
 export const gameApi = {
   async createGame(width: number, height: number): Promise<string> {
