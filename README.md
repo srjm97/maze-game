@@ -1,56 +1,126 @@
-# EchoMaze Backend API
+# Maze Game
 
-A RESTful backend service for the EchoMaze game, providing maze generation and game state management.
+A full-stack web-based maze game featuring user authentication, high scores, and multiple game modes. Built with a Python FastAPI backend and a modern React + Vite frontend.
+
+## Table of Contents
+
+- [Features](#features)
+- [Tech Stack](#tech-stack)
+- [Getting Started](#getting-started)
+  - [Backend Setup](#backend-setup)
+  - [Frontend Setup](#frontend-setup)
+  - [Docker Setup](#docker-setup)
+- [Game Modes](#game-modes)
+- [API Endpoints](#api-endpoints)
+- [Project Structure](#project-structure)
+- [Contributing](#contributing)
+- [License](#license)
+
+---
 
 ## Features
 
-- Maze generation with configurable dimensions
-- Player movement validation
-- Game state management
-- Wall detection
+- 🧩 Maze and Tiles game modes
+- 🔒 User authentication (login/register)
+- 🏆 High scores leaderboard
+- 🎮 Responsive UI with animations
+- 🗣️ Voice command support
+- 📊 Game statistics and controls
 
-## Installation
+## Tech Stack
 
-1. Ensure you have Python 3.8+ installed
-2. Install requirements:
+- **Backend:** Python, FastAPI, SQLAlchemy
+- **Frontend:** React, Vite, TypeScript
+- **Database:** SQLite (default, configurable)
+- **Containerization:** Docker, Docker Compose
+- **Web Server:** Nginx
+
+---
+
+## Getting Started
+
+### Backend Setup
+
+1. Navigate to the backend folder:
+   ```sh
+   cd backend
    ```
+2. Install dependencies:
+   ```sh
    pip install -r requirements.txt
    ```
+3. Run the FastAPI server:
+   ```sh
+   uvicorn app:app --reload
+   ```
 
-## Running the Server
+### Frontend Setup
 
-```bash
-python backend.py
-```
+1. Navigate to the frontend folder:
+   ```sh
+   cd frontend
+   ```
+2. Install dependencies:
+   ```sh
+   npm install
+   ```
+3. Start the development server:
+   ```sh
+   npm run dev
+   ```
 
-The server will start at `http://localhost:8000`
+### Docker Setup
+
+1. Build and start all services:
+   ```sh
+   docker-compose up --build
+   ```
+2. Access the app at [http://localhost](http://localhost)
+
+---
+
+## Game Modes
+
+- **Maze Game:** Navigate through randomly generated mazes.
+- **Tiles Game:** Solve tile-based puzzles with increasing difficulty.
+
+---
 
 ## API Endpoints
 
-### Create New Game
-- `POST /game`
-- Body: `{"width": 10, "height": 10}`
-- Returns: Game ID
+The backend exposes RESTful endpoints for authentication, game logic, and high scores. See `backend/app.py` and `backend/auth.py` for details.
 
-### Get Game State
-- `GET /game/{game_id}`
-- Returns: Current game state including player position, goal position, and maze layout
+---
 
-### Move Player
-- `POST /game/{game_id}/move`
-- Body: `{"direction": "up|down|left|right"}`
-- Returns: Updated game state
+## Project Structure
 
-### Get Nearby Walls
-- `GET /game/{game_id}/walls`
-- Returns: List of wall positions adjacent to player
-
-## Example Usage
-
-```bash
-# Create a new game
-curl -X POST "http://localhost:8000/game" -H "Content-Type: application/json" -d '{"width": 10, "height": 10}'
-
-# Move player right
-curl -X POST "http://localhost:8000/game/1234/move" -H "Content-Type: application/json" -d '{"direction": "right"}'
 ```
+maze-game/
+├── backend/         # FastAPI backend
+│   ├── games/       # Game logic modules
+│   ├── models.py    # Database models
+│   ├── auth.py      # Authentication logic
+│   └── ...
+├── frontend/        # React + Vite frontend
+│   ├── src/         # Source code
+│   ├── public/      # Static assets
+│   └── ...
+├── Dockerfiles/     # Dockerfiles for backend & frontend
+├── docker-compose.yml
+├── nginx/           # Nginx config
+└── README.md
+```
+
+---
+
+## Contributing
+
+Contributions are welcome! Please open issues or submit pull requests for improvements and bug fixes.
+
+---
+
+## License
+
+This project is licensed under the MIT License.
+
+---
