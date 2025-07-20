@@ -22,8 +22,11 @@ def connect_to_mongo():
 
 async def get_database():
     if db.database is None:
-        connect_to_mongo()
+        # Call the sync function in a thread pool to avoid blocking
+        from fastapi.concurrency import run_in_threadpool
+        await run_in_threadpool(connect_to_mongo)
     return db.database
+
 
 async def close_mongo_connection():
     if db.client:
