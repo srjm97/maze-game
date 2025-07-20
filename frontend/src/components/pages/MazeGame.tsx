@@ -194,7 +194,7 @@ export default function MazeGame({ onBackToLanding }: MazeGameProps) {
       setMoveCount(0); // Reset move count for new game
       setIsNewRecord(false); // Reset new record flag
       setShowSuccess(false); // Hide success message
-      
+
       const response = await axios.post(`${API_BASE_URL}/game`, {
         width: 15,
         height: 15,
@@ -240,16 +240,16 @@ export default function MazeGame({ onBackToLanding }: MazeGameProps) {
       setMoveCount(newMoveCount);
 
       if (response.data.game_over) {
-
         const scoreResult = addMazeScore(newMoveCount);
         setIsNewRecord(scoreResult.isNewRecord);
-        
+
         setBestScore(getBestMazeScore());
-        
+
         playVictoryMusic();
-        speakMessage(scoreResult.isNewRecord ? 
-          `${messages.victory} New record with ${newMoveCount} moves!` : 
-          messages.victory
+        speakMessage(
+          scoreResult.isNewRecord
+            ? `${messages.victory} New record with ${newMoveCount} moves!`
+            : messages.victory
         );
         setShowSuccess(true);
         setTimeout(() => {
@@ -389,23 +389,22 @@ export default function MazeGame({ onBackToLanding }: MazeGameProps) {
         `}
       </style>
 
-     <BackButton onClick={onBackToLanding} />
+      <BackButton onClick={onBackToLanding} />
 
       {showSuccess && (
         <VictoryModal
-                isVisible={showSuccess}
-                moveCount={moveCount}
-                customMessage={
-                  isNewRecord
-                    ? `🏆 NEW RECORD! You reached in  ${moveCount} pairs! 🏆`
-                    : `You found all ${moveCount} pairs!`
-                }
-                gameType="maze"
-                difficulty="easy"
-                
-              />
+          isVisible={showSuccess}
+          moveCount={moveCount}
+          customMessage={
+            isNewRecord
+              ? `🏆 NEW RECORD! You reached in  ${moveCount} pairs! 🏆`
+              : `You found all ${moveCount} pairs!`
+          }
+          gameType="maze"
+          difficulty="easy"
+        />
       )}
-      
+
       <h1
         style={{
           fontSize: '2.5rem',
@@ -424,9 +423,9 @@ export default function MazeGame({ onBackToLanding }: MazeGameProps) {
         bestScore={bestScore}
         isNewRecord={isNewRecord && showSuccess}
         gameType="maze"
-        difficulty=''
+        difficulty=""
       />
-      
+
       <div
         style={{
           position: 'relative',
@@ -492,7 +491,7 @@ export default function MazeGame({ onBackToLanding }: MazeGameProps) {
           ))
         )}
       </div>
-      
+
       <div
         style={{
           display: 'flex',
@@ -519,7 +518,7 @@ export default function MazeGame({ onBackToLanding }: MazeGameProps) {
           New Game
         </button>
       </div>
-      
+
       <div
         style={{
           marginTop: '20px',

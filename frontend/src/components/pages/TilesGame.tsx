@@ -163,7 +163,6 @@ export default function TilesGame({ onBackToMenu }: TilesGameProps) {
         }
         gameType="tiles"
         difficulty={difficulty}
-        
       />
       <BackButton onClick={onBackToMenu} />
 
@@ -206,10 +205,10 @@ export default function TilesGame({ onBackToMenu }: TilesGameProps) {
       />
 
       <VoiceCommand
-      tiles = {tiles}
-      difficulty = {difficulty}
-      handleTileClick =  {handleTileClick}
-      initializeGame = {initializeGame}
+        tiles={tiles}
+        difficulty={difficulty}
+        handleTileClick={handleTileClick}
+        initializeGame={initializeGame}
       />
     </div>
   );

@@ -13,7 +13,10 @@ export const SAMPLE_HIGH_SCORES: Record<ScoreGame, HighScore[]> = {
     { user_email: 'speedrunner@maze.gg', score: 901 },
     { user_email: 'raj.deep@playzone.in', score: 880 },
     { user_email: 'samuel@outlook.com', score: 845 },
-    { user_email: 'avery.long.email.address+maze@testdomain.co.uk', score: 812 },
+    {
+      user_email: 'avery.long.email.address+maze@testdomain.co.uk',
+      score: 812,
+    },
     { user_email: 'nadia@players.org', score: 799 },
     { user_email: 'lee@mazing.dev', score: 760 },
     { user_email: 'guest123@anonmail.com', score: 733 },

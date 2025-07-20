@@ -14,7 +14,8 @@ import {
 import axios from 'axios';
 import BackButton from '../atoms/BackButton';
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000';
+const API_BASE_URL =
+  import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000';
 
 interface User {
   id: string;
@@ -54,7 +55,9 @@ export default function HighScores({ onBackToLanding }: HighScoresProps) {
   });
   const [userScores, setUserScores] = useState<UserScore[]>([]);
   const [loading, setLoading] = useState(true);
-  const [selectedTab, setSelectedTab] = useState<'global' | 'personal'>('global');
+  const [selectedTab, setSelectedTab] = useState<'global' | 'personal'>(
+    'global'
+  );
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -78,17 +81,30 @@ export default function HighScores({ onBackToLanding }: HighScoresProps) {
 
   const fetchAllScores = async () => {
     if (!currentUser) return;
-    
+
     setLoading(true);
     setError(null);
 
     try {
       // Fetch global leaderboards
-      const [mazeResponse, tilesEasyResponse, tilesMediumResponse, tilesHardResponse] = await Promise.all([
-        axios.get(`${API_BASE_URL}/score/top10?game_name=maze_easy`).catch(() => ({ data: { top_10_scores: [] } })),
-        axios.get(`${API_BASE_URL}/score/top10?game_name=tiles_easy`).catch(() => ({ data: { top_10_scores: [] } })),
-        axios.get(`${API_BASE_URL}/score/top10?game_name=tiles_medium`).catch(() => ({ data: { top_10_scores: [] } })),
-        axios.get(`${API_BASE_URL}/score/top10?game_name=tiles_hard`).catch(() => ({ data: { top_10_scores: [] } })),
+      const [
+        mazeResponse,
+        tilesEasyResponse,
+        tilesMediumResponse,
+        tilesHardResponse,
+      ] = await Promise.all([
+        axios
+          .get(`${API_BASE_URL}/score/top10?game_name=maze_easy`)
+          .catch(() => ({ data: { top_10_scores: [] } })),
+        axios
+          .get(`${API_BASE_URL}/score/top10?game_name=tiles_easy`)
+          .catch(() => ({ data: { top_10_scores: [] } })),
+        axios
+          .get(`${API_BASE_URL}/score/top10?game_name=tiles_medium`)
+          .catch(() => ({ data: { top_10_scores: [] } })),
+        axios
+          .get(`${API_BASE_URL}/score/top10?game_name=tiles_hard`)
+          .catch(() => ({ data: { top_10_scores: [] } })),
       ]);
 
       setMazeLeaderboard(mazeResponse.data.top_10_scores || []);
@@ -100,23 +116,48 @@ export default function HighScores({ onBackToLanding }: HighScoresProps) {
 
       // Fetch user's personal scores
       const userScorePromises = [
-        axios.get(`${API_BASE_URL}/score/highest?user_email=${currentUser.email}&game_name=maze_easy`)
-          .then(res => ({ game_name: 'Maze Game', highest_score: res.data.highest_score }))
+        axios
+          .get(
+            `${API_BASE_URL}/score/highest?user_email=${currentUser.email}&game_name=maze_easy`
+          )
+          .then((res) => ({
+            game_name: 'Maze Game',
+            highest_score: res.data.highest_score,
+          }))
           .catch(() => null),
-        axios.get(`${API_BASE_URL}/score/highest?user_email=${currentUser.email}&game_name=tiles_easy`)
-          .then(res => ({ game_name: 'Memory Tiles (Easy)', highest_score: res.data.highest_score }))
+        axios
+          .get(
+            `${API_BASE_URL}/score/highest?user_email=${currentUser.email}&game_name=tiles_easy`
+          )
+          .then((res) => ({
+            game_name: 'Memory Tiles (Easy)',
+            highest_score: res.data.highest_score,
+          }))
           .catch(() => null),
-        axios.get(`${API_BASE_URL}/score/highest?user_email=${currentUser.email}&game_name=tiles_medium`)
-          .then(res => ({ game_name: 'Memory Tiles (Medium)', highest_score: res.data.highest_score }))
+        axios
+          .get(
+            `${API_BASE_URL}/score/highest?user_email=${currentUser.email}&game_name=tiles_medium`
+          )
+          .then((res) => ({
+            game_name: 'Memory Tiles (Medium)',
+            highest_score: res.data.highest_score,
+          }))
           .catch(() => null),
-        axios.get(`${API_BASE_URL}/score/highest?user_email=${currentUser.email}&game_name=tiles_hard`)
-          .then(res => ({ game_name: 'Memory Tiles (Hard)', highest_score: res.data.highest_score }))
+        axios
+          .get(
+            `${API_BASE_URL}/score/highest?user_email=${currentUser.email}&game_name=tiles_hard`
+          )
+          .then((res) => ({
+            game_name: 'Memory Tiles (Hard)',
+            highest_score: res.data.highest_score,
+          }))
           .catch(() => null),
       ];
 
       const userScoreResults = await Promise.all(userScorePromises);
-      setUserScores(userScoreResults.filter(score => score !== null) as UserScore[]);
-
+      setUserScores(
+        userScoreResults.filter((score) => score !== null) as UserScore[]
+      );
     } catch (error) {
       console.error('Error fetching scores:', error);
       setError('Failed to load scores. Please try again.');
@@ -134,7 +175,11 @@ export default function HighScores({ onBackToLanding }: HighScoresProps) {
       case 3:
         return <FontAwesomeIcon icon={faMedal} style={{ color: '#cd7f32' }} />;
       default:
-        return <span style={{ color: '#8b949e', fontWeight: 'bold' }}>{position}</span>;
+        return (
+          <span style={{ color: '#8b949e', fontWeight: 'bold' }}>
+            {position}
+          </span>
+        );
     }
   };
 
@@ -146,7 +191,11 @@ export default function HighScores({ onBackToLanding }: HighScoresProps) {
     }
   };
 
-  const renderLeaderboard = (scores: Score[], title: string, gameIcon: React.ReactNode) => (
+  const renderLeaderboard = (
+    scores: Score[],
+    title: string,
+    gameIcon: React.ReactNode
+  ) => (
     <div
       style={{
         background: '#282c34',
@@ -155,8 +204,8 @@ export default function HighScores({ onBackToLanding }: HighScoresProps) {
         marginBottom: '2rem',
         border: '1px solid #404258',
         boxShadow: '0 4px 6px rgba(0, 0, 0, 0.3)',
-        width: `${title=="Maze Game Leaderboard"?'800px':'auto'}`,
-        placeSelf: `${title=="Maze Game Leaderboard"?'center':'auto'}`,
+        width: `${title == 'Maze Game Leaderboard' ? '800px' : 'auto'}`,
+        placeSelf: `${title == 'Maze Game Leaderboard' ? 'center' : 'auto'}`,
       }}
     >
       <div
@@ -170,15 +219,19 @@ export default function HighScores({ onBackToLanding }: HighScoresProps) {
         }}
       >
         {gameIcon}
-        <h3 style={{ color: '#fff', margin: 0, fontSize: '1.4rem' }}>{title}</h3>
+        <h3 style={{ color: '#fff', margin: 0, fontSize: '1.4rem' }}>
+          {title}
+        </h3>
       </div>
-      
+
       {scores.length === 0 ? (
         <p style={{ color: '#8b949e', textAlign: 'center', margin: '2rem 0' }}>
           No scores recorded yet. Be the first to play!
         </p>
       ) : (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+        <div
+          style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}
+        >
           {scores.map((score, index) => (
             <div
               key={index}
@@ -189,7 +242,10 @@ export default function HighScores({ onBackToLanding }: HighScoresProps) {
                 padding: '0.75rem',
                 background: index < 3 ? '#363842' : '#2c2d31',
                 borderRadius: '8px',
-                border: score.user_email === currentUser?.email ? '2px solid #61dafb' : '1px solid transparent',
+                border:
+                  score.user_email === currentUser?.email
+                    ? '2px solid #61dafb'
+                    : '1px solid transparent',
                 position: 'relative',
                 overflow: 'hidden',
               }}
@@ -202,24 +258,47 @@ export default function HighScores({ onBackToLanding }: HighScoresProps) {
                     left: 0,
                     right: 0,
                     bottom: 0,
-                    background: 'linear-gradient(90deg, rgba(97, 218, 251, 0.1) 0%, transparent 100%)',
+                    background:
+                      'linear-gradient(90deg, rgba(97, 218, 251, 0.1) 0%, transparent 100%)',
                     pointerEvents: 'none',
                   }}
                 />
               )}
-              
-              <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', zIndex: 1 }}>
+
+              <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '1rem',
+                  zIndex: 1,
+                }}
+              >
                 <div style={{ minWidth: '2rem', textAlign: 'center' }}>
                   {getRankIcon(index + 1)}
                 </div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                <div
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '0.5rem',
+                  }}
+                >
                   <FontAwesomeIcon icon={faUser} style={{ color: '#8b949e' }} />
-                  <span style={{ color: score.user_email === currentUser?.email ? '#61dafb' : '#fff' }}>
-                    {score.user_email === currentUser?.email ? 'You' : score.user_email.split('@')[0]}
+                  <span
+                    style={{
+                      color:
+                        score.user_email === currentUser?.email
+                          ? '#61dafb'
+                          : '#fff',
+                    }}
+                  >
+                    {score.user_email === currentUser?.email
+                      ? 'You'
+                      : score.user_email.split('@')[0]}
                   </span>
                 </div>
               </div>
-              
+
               <div
                 style={{
                   fontWeight: 'bold',
@@ -290,7 +369,13 @@ export default function HighScores({ onBackToLanding }: HighScoresProps) {
           </p>
         </div>
       ) : (
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '1rem' }}>
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+            gap: '1rem',
+          }}
+        >
           {userScores.map((userScore, index) => (
             <div
               key={index}
@@ -304,13 +389,17 @@ export default function HighScores({ onBackToLanding }: HighScoresProps) {
                 justifyContent: 'space-between',
               }}
             >
-              <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+              <div
+                style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}
+              >
                 {getGameIcon(userScore.game_name)}
                 <div>
                   <h4 style={{ color: '#fff', margin: 0, fontSize: '1.1rem' }}>
                     {userScore.game_name}
                   </h4>
-                  <p style={{ color: '#8b949e', margin: 0, fontSize: '0.9rem' }}>
+                  <p
+                    style={{ color: '#8b949e', margin: 0, fontSize: '0.9rem' }}
+                  >
                     Best Performance
                   </p>
                 </div>
@@ -382,7 +471,15 @@ export default function HighScores({ onBackToLanding }: HighScoresProps) {
         }}
       >
         <div style={{ textAlign: 'center' }}>
-          <p style={{ color: '#ff6b6b', fontSize: '1.2rem', marginBottom: '1rem' }}>{error}</p>
+          <p
+            style={{
+              color: '#ff6b6b',
+              fontSize: '1.2rem',
+              marginBottom: '1rem',
+            }}
+          >
+            {error}
+          </p>
           <button
             onClick={fetchAllScores}
             style={{
@@ -511,15 +608,25 @@ export default function HighScores({ onBackToLanding }: HighScoresProps) {
         </div>
 
         {/* Content based on selected tab */}
-        <div className="slide-in" style={{ maxWidth: '1400px', margin: '0 auto' , placeContent: 'center' }}>
+        <div
+          className="slide-in"
+          style={{
+            maxWidth: '1400px',
+            margin: '0 auto',
+            placeContent: 'center',
+          }}
+        >
           {selectedTab === 'global' ? (
             <div>
               {renderLeaderboard(
                 mazeLeaderboard,
                 'Maze Game Leaderboard',
-                <FontAwesomeIcon icon={faGamepad} style={{ color: '#61dafb' }} />
+                <FontAwesomeIcon
+                  icon={faGamepad}
+                  style={{ color: '#61dafb' }}
+                />
               )}
-              
+
               <div style={{ marginBottom: '2rem' }}>
                 <h2
                   style={{
@@ -536,22 +643,34 @@ export default function HighScores({ onBackToLanding }: HighScoresProps) {
                   <FontAwesomeIcon icon={faThLarge} />
                   Memory Tiles Leaderboards
                 </h2>
-                
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))', gap: '2rem' }}>
+
+                <div
+                  style={{
+                    display: 'grid',
+                    gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))',
+                    gap: '2rem',
+                  }}
+                >
                   {renderLeaderboard(
                     tilesLeaderboards.easy,
                     'Easy',
-                    <span style={{ color: '#4ade80', fontWeight: 'bold' }}>🟢</span>
+                    <span style={{ color: '#4ade80', fontWeight: 'bold' }}>
+                      🟢
+                    </span>
                   )}
                   {renderLeaderboard(
                     tilesLeaderboards.medium,
                     'Medium',
-                    <span style={{ color: '#facc15', fontWeight: 'bold' }}>🟡</span>
+                    <span style={{ color: '#facc15', fontWeight: 'bold' }}>
+                      🟡
+                    </span>
                   )}
                   {renderLeaderboard(
                     tilesLeaderboards.hard,
                     'Hard',
-                    <span style={{ color: '#ef4444', fontWeight: 'bold' }}>🔴</span>
+                    <span style={{ color: '#ef4444', fontWeight: 'bold' }}>
+                      🔴
+                    </span>
                   )}
                 </div>
               </div>

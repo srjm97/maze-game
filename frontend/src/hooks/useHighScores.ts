@@ -1,8 +1,16 @@
 import { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
-import { User, Score, UserScore, TilesLeaderboards, LeaderboardResponse, UserHighScoreResponse } from '../types/scoreTypes';
+import {
+  User,
+  Score,
+  UserScore,
+  TilesLeaderboards,
+  LeaderboardResponse,
+  UserHighScoreResponse,
+} from '../types/scoreTypes';
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000';
+const API_BASE_URL =
+  import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000';
 
 interface UseHighScoresReturn {
   currentUser: User | null;
@@ -17,11 +25,13 @@ interface UseHighScoresReturn {
 export const useHighScores = (): UseHighScoresReturn => {
   const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [mazeLeaderboard, setMazeLeaderboard] = useState<Score[]>([]);
-  const [tilesLeaderboards, setTilesLeaderboards] = useState<TilesLeaderboards>({
-    easy: [],
-    medium: [],
-    hard: [],
-  });
+  const [tilesLeaderboards, setTilesLeaderboards] = useState<TilesLeaderboards>(
+    {
+      easy: [],
+      medium: [],
+      hard: [],
+    }
+  );
   const [userScores, setUserScores] = useState<UserScore[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -47,20 +57,51 @@ export const useHighScores = (): UseHighScoresReturn => {
     tilesHard: Score[];
   }> => {
     const requests = [
-      axios.get<LeaderboardResponse>(`${API_BASE_URL}/score/top10?game_name=maze`),
-      axios.get<LeaderboardResponse>(`${API_BASE_URL}/score/top10?game_name=tiles_easy`),
-      axios.get<LeaderboardResponse>(`${API_BASE_URL}/score/top10?game_name=tiles_medium`),
-      axios.get<LeaderboardResponse>(`${API_BASE_URL}/score/top10?game_name=tiles_hard`),
+      axios.get<LeaderboardResponse>(
+        `${API_BASE_URL}/score/top10?game_name=maze`
+      ),
+      axios.get<LeaderboardResponse>(
+        `${API_BASE_URL}/score/top10?game_name=tiles_easy`
+      ),
+      axios.get<LeaderboardResponse>(
+        `${API_BASE_URL}/score/top10?game_name=tiles_medium`
+      ),
+      axios.get<LeaderboardResponse>(
+        `${API_BASE_URL}/score/top10?game_name=tiles_hard`
+      ),
     ];
 
     try {
-      const [mazeResponse, tilesEasyResponse, tilesMediumResponse, tilesHardResponse] = await Promise.allSettled(requests);
-        console.log("Responses",mazeResponse, tilesEasyResponse, tilesMediumResponse, tilesHardResponse);
+      const [
+        mazeResponse,
+        tilesEasyResponse,
+        tilesMediumResponse,
+        tilesHardResponse,
+      ] = await Promise.allSettled(requests);
+      console.log(
+        'Responses',
+        mazeResponse,
+        tilesEasyResponse,
+        tilesMediumResponse,
+        tilesHardResponse
+      );
       return {
-        maze: mazeResponse.status === 'fulfilled' ? mazeResponse.value.data.top_10_scores : [],
-        tilesEasy: tilesEasyResponse.status === 'fulfilled' ? tilesEasyResponse.value.data.top_10_scores : [],
-        tilesMedium: tilesMediumResponse.status === 'fulfilled' ? tilesMediumResponse.value.data.top_10_scores : [],
-        tilesHard: tilesHardResponse.status === 'fulfilled' ? tilesHardResponse.value.data.top_10_scores : [],
+        maze:
+          mazeResponse.status === 'fulfilled'
+            ? mazeResponse.value.data.top_10_scores
+            : [],
+        tilesEasy:
+          tilesEasyResponse.status === 'fulfilled'
+            ? tilesEasyResponse.value.data.top_10_scores
+            : [],
+        tilesMedium:
+          tilesMediumResponse.status === 'fulfilled'
+            ? tilesMediumResponse.value.data.top_10_scores
+            : [],
+        tilesHard:
+          tilesHardResponse.status === 'fulfilled'
+            ? tilesHardResponse.value.data.top_10_scores
+            : [],
       };
     } catch (error) {
       console.error('Error fetching global leaderboards:', error);
@@ -68,37 +109,42 @@ export const useHighScores = (): UseHighScoresReturn => {
     }
   }, []);
 
-  const fetchUserScores = useCallback(async (userEmail: string): Promise<UserScore[]> => {
-    const gameTypes = [
-      { game: 'maze', display: 'Maze Game' },
-      { game: 'tiles_easy', display: 'Memory Tiles (Easy)' },
-      { game: 'tiles_medium', display: 'Memory Tiles (Medium)' },
-      { game: 'tiles_hard', display: 'Memory Tiles (Hard)' },
-    ];
+  const fetchUserScores = useCallback(
+    async (userEmail: string): Promise<UserScore[]> => {
+      const gameTypes = [
+        { game: 'maze', display: 'Maze Game' },
+        { game: 'tiles_easy', display: 'Memory Tiles (Easy)' },
+        { game: 'tiles_medium', display: 'Memory Tiles (Medium)' },
+        { game: 'tiles_hard', display: 'Memory Tiles (Hard)' },
+      ];
 
-    const requests = gameTypes.map(({ game }) =>
-      axios.get<UserHighScoreResponse>(`${API_BASE_URL}/score/highest?user_email=${userEmail}&game_name=${game}`)
-    );
+      const requests = gameTypes.map(({ game }) =>
+        axios.get<UserHighScoreResponse>(
+          `${API_BASE_URL}/score/highest?user_email=${userEmail}&game_name=${game}`
+        )
+      );
 
-    try {
-      const results = await Promise.allSettled(requests);
-      
-      return results
-        .map((result, index) => {
-          if (result.status === 'fulfilled') {
-            return {
-              game_name: gameTypes[index].display,
-              highest_score: result.value.data.highest_score,
-            };
-          }
-          return null;
-        })
-        .filter((score): score is UserScore => score !== null);
-    } catch (error) {
-      console.error('Error fetching user scores:', error);
-      return [];
-    }
-  }, []);
+      try {
+        const results = await Promise.allSettled(requests);
+
+        return results
+          .map((result, index) => {
+            if (result.status === 'fulfilled') {
+              return {
+                game_name: gameTypes[index].display,
+                highest_score: result.value.data.highest_score,
+              };
+            }
+            return null;
+          })
+          .filter((score): score is UserScore => score !== null);
+      } catch (error) {
+        console.error('Error fetching user scores:', error);
+        return [];
+      }
+    },
+    []
+  );
 
   const refreshScores = useCallback(async () => {
     if (!currentUser) {
@@ -126,7 +172,9 @@ export const useHighScores = (): UseHighScoresReturn => {
       setUserScores(userScoreData);
     } catch (error) {
       console.error('Error refreshing scores:', error);
-      setError(error instanceof Error ? error.message : 'Failed to load scores');
+      setError(
+        error instanceof Error ? error.message : 'Failed to load scores'
+      );
     } finally {
       setLoading(false);
     }

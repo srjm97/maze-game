@@ -168,8 +168,8 @@ export default function LandingPage({ onGameSelect }: LandingPageProps) {
         ))}
       </div>
       <button onClick={() => onGameSelect('highscores')}>
-  View High Scores
-</button>
+        View High Scores
+      </button>
 
       <style>
         {`

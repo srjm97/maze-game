@@ -1,4 +1,3 @@
-
 export interface User {
   id: string;
   email: string;
@@ -55,27 +54,27 @@ export const GAME_CONFIGS: Record<string, GameConfig> = {
     displayName: 'Maze Game',
     icon: 'gamepad',
     color: '#61dafb',
-    scoreUnit: 'moves'
+    scoreUnit: 'moves',
   },
   tiles_easy: {
     name: 'tiles_easy',
     displayName: 'Memory Tiles (Easy)',
     icon: 'th-large',
     color: '#4ade80',
-    scoreUnit: 'moves'
+    scoreUnit: 'moves',
   },
   tiles_medium: {
     name: 'tiles_medium',
     displayName: 'Memory Tiles (Medium)',
     icon: 'th-large',
     color: '#facc15',
-    scoreUnit: 'moves'
+    scoreUnit: 'moves',
   },
   tiles_hard: {
     name: 'tiles_hard',
     displayName: 'Memory Tiles (Hard)',
     icon: 'th-large',
     color: '#ef4444',
-    scoreUnit: 'moves'
-  }
+    scoreUnit: 'moves',
+  },
 };
