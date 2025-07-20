@@ -2,6 +2,7 @@ from motor.motor_asyncio import AsyncIOMotorClient
 import asyncio
 from config import settings
 import logging
+from contextlib import asynccontextmanager
 
 logger = logging.getLogger(__name__)
 
@@ -25,10 +26,16 @@ async def connect_to_mongo():
     except Exception as e:
         logger.error(f"Failed to connect to MongoDB: {e}")
         raise
+
+@asynccontextmanager
 async def get_database():
-    if db.database is None:
-        await connect_to_mongo()  # ← now uses async version
-    return db.database
+    client = AsyncIOMotorClient(settings.MONGODB_URL)
+    try:
+        db = client[settings.DATABASE_NAME]
+        yield db
+    finally:
+        client.close()
+
 
 async def close_mongo_connection():
     if db.client:

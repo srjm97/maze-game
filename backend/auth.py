@@ -69,8 +69,7 @@ def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
     return encoded_jwt
 
 async def get_current_user(
-    credentials: HTTPAuthorizationCredentials = Depends(security),
-    db = Depends(get_database)
+    credentials: HTTPAuthorizationCredentials = Depends(security)
 ) -> UserResponse:
     """Get current authenticated user"""
     print(f"Received credentials: {credentials}")
@@ -94,10 +93,11 @@ async def get_current_user(
         raise credentials_exception
     
     try:
-        user = await db.users.find_one({"_id": ObjectId(user_id)})
-        print(f"Fetched user from DB: {user}")
-        if user is None:
-            raise credentials_exception
+        async with get_database() as db:
+            user = await db.users.find_one({"_id": ObjectId(user_id)})
+            print(f"Fetched user from DB: {user}")
+            if user is None:
+                raise credentials_exception
     except Exception as e:
         print(f"Error fetching user from DB: {e}")
         raise HTTPException(status_code=500, detail="Database error")

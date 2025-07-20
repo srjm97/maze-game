@@ -63,8 +63,7 @@ async def google_login():
 
 @app.get("/auth/google/callback")
 async def google_callback(
-    code: str = Query(...),
-    db = Depends(get_database)
+    code: str = Query(...)
 ):
     """Handle Google OAuth callback"""
     try:
@@ -77,30 +76,31 @@ async def google_callback(
         user_info = await GoogleAuth.get_user_info(token_data["access_token"])
         
         # Check if user exists in database
-        existing_user = await db.users.find_one({"google_id": user_info["id"]})
-        
-        if existing_user:
-            # Update existing user
-            await db.users.update_one(
-                {"_id": existing_user["_id"]},
-                {"$set": {
-                    "name": user_info["name"],
-                    "picture": user_info.get("picture"),
-                    "updated_at": datetime.now()
-                }}
-            )
-            user_id = str(existing_user["_id"])
-        else:
-            # Create new user
-            new_user = User(
-                email=user_info["email"],
-                name=user_info["name"],
-                picture=user_info.get("picture"),
-                google_id=user_info["id"]
-            )
+        async with get_database() as db:
+            existing_user = await db.users.find_one({"google_id": user_info["id"]})
             
-            result = await db.users.insert_one(new_user.model_dump(by_alias=True))
-            user_id = str(result.inserted_id)
+            if existing_user:
+                # Update existing user
+                await db.users.update_one(
+                    {"_id": existing_user["_id"]},
+                    {"$set": {
+                        "name": user_info["name"],
+                        "picture": user_info.get("picture"),
+                        "updated_at": datetime.now()
+                    }}
+                )
+                user_id = str(existing_user["_id"])
+            else:
+                # Create new user
+                new_user = User(
+                    email=user_info["email"],
+                    name=user_info["name"],
+                    picture=user_info.get("picture"),
+                    google_id=user_info["id"]
+                )
+                
+                result = await db.users.insert_one(new_user.model_dump(by_alias=True))
+                user_id = str(result.inserted_id)
         
         # Create JWT token
         access_token = create_access_token(data={"sub": user_id})
@@ -178,8 +178,7 @@ async def get_nearby_walls(game_id: str):
 async def add_score(
     user_email: str = Query(...),
     game_name: str = Query(...),
-    score: int = Query(...),
-    db = Depends(get_database)
+    score: int = Query(...)
 ):
     """Add a score for a user in a specific game"""
     score_doc = {
@@ -188,48 +187,49 @@ async def add_score(
         "score": score,
         "created_at": datetime.now()
     }
-    result = await db.scores.insert_one(score_doc)
+    async with get_database() as db:
+        result = await db.scores.insert_one(score_doc)
     return {"message": "Score added", "score_id": str(result.inserted_id)}
 
 @app.get("/score/highest")
 async def get_highest_score(
     user_email: str = Query(...),
-    game_name: str = Query(...),
-    db = Depends(get_database)
+    game_name: str = Query(...)
 ):
     """Get the highest score for a user in a specific game (minimum value)"""
-    score_doc = await db.scores.find_one(
-        {"user_email": user_email, "game_name": game_name},
-        sort=[("score", 1)]  # Ascending order, minimum value first
-    )
-    if not score_doc:
-        raise HTTPException(status_code=404, detail="Score not found")
-    return {
-        "user_email": score_doc["user_email"],
-        "game_name": score_doc["game_name"],
-        "highest_score": score_doc["score"]
-    }
+    async with get_database() as db:
+        score_doc = await db.scores.find_one(
+            {"user_email": user_email, "game_name": game_name},
+            sort=[("score", 1)]  # Ascending order, minimum value first
+        )
+        if not score_doc:
+            raise HTTPException(status_code=404, detail="Score not found")
+        return {
+            "user_email": score_doc["user_email"],
+            "game_name": score_doc["game_name"],
+            "highest_score": score_doc["score"]
+        }
 
 @app.get("/score/top10")
 async def get_top_10_scores(
-    game_name: str = Query(...),
-    db = Depends(get_database)
+    game_name: str = Query(...)
 ):
     """Get top 10 unique scores (lowest values) for a specific game across all users"""
-    cursor = db.scores.find({"game_name": game_name}).sort("score", 1)
-    seen = set()
-    top_scores = []
-    async for score_doc in cursor:
-        key = (score_doc["user_email"], score_doc["score"])
-        if key not in seen:
-            seen.add(key)
-            top_scores.append({
-                "user_email": score_doc["user_email"],
-                "score": score_doc["score"]
-            })
-        if len(top_scores) == 10:
-            break
-    return {"game_name": game_name, "top_10_scores": top_scores}
+    async with get_database() as db:
+        cursor = db.scores.find({"game_name": game_name}).sort("score", 1)
+        seen = set()
+        top_scores = []
+        async for score_doc in cursor:
+            key = (score_doc["user_email"], score_doc["score"])
+            if key not in seen:
+                seen.add(key)
+                top_scores.append({
+                    "user_email": score_doc["user_email"],
+                    "score": score_doc["score"]
+                })
+            if len(top_scores) == 10:
+                break
+        return {"game_name": game_name, "top_10_scores": top_scores}
 
 # Word to number mapping
 WORD_TO_NUMBER = {
