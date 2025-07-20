@@ -1,31 +1,31 @@
 # 🎮 Game Console
 
-> **An inclusive web-based gaming platform for the visually impaired**, featuring audio-guided maze navigation, voice-controlled tile puzzles, and global scoreboards.
+> **An inclusive gaming platform for the visually impaired**, featuring voice-controlled puzzles, audio-guided mazes, and leaderboard tracking — all delivered through a sleek web interface.
 
-Built with ❤️ using **FastAPI**, **React + Vite**, and advanced **speech technologies**.
+Built with ❤️ using **FastAPI**, **React + Vite**, and advanced **speech + vision** technology.
 
 ---
 
 ## 🧠 What’s Inside?
 
-* 🧩 **Maze Game** with real-time **audio cues** for navigation
-* 🗣️ **Tile Game** powered by **voice commands**
-* 📊 **Leaderboard system** for both **individual** and **global** scoring
-* 🔒 Seamless **user authentication**
-* 🎯 Intuitive and **accessible UX** with responsive design
-* 🧏‍♂️ Designed for **visually impaired players**
+* 🧩 **Maze Game** with real-time **audio guidance**
+* 🗣️ **Tile Game** using **voice commands**
+* 🔐 **Secure Google OAuth login** with **JWT-based session management**
+* 📊 **Global and personal leaderboards**
+* 💬 Powered by **ElevenLabs TTS/STT** for full accessibility
+* 🌐 Fully **responsive UI** and accessible UX
 
 ---
 
 ## 🚀 Tech Stack
 
-| Layer          | Tech Stack                                           |
-| -------------- | ---------------------------------------------------- |
-| **Backend**    | Python 3.13, FastAPI, SQLAlchemy                     |
-| **Frontend**   | Node.js 24, React + Vite, TypeScript                 |
-| **Database**   | SQLite (default, configurable)                       |
-| **Speech**     | [ElevenLabs](https://www.elevenlabs.io/) for TTS/STT |
-| **Deployment** | Docker, Docker Compose, Nginx                        |
+| Layer          | Technology                                             |
+| -------------- | ------------------------------------------------------ |
+| **Backend**    | Python 3.13, FastAPI, JWT, OAuth2 (Google)             |
+| **Frontend**   | Node.js 24, React + Vite, TypeScript                   |
+| **Database**   | MongoDB Atlas (Cloud NoSQL)                            |
+| **Speech**     | [ElevenLabs](https://www.elevenlabs.io/) for STT & TTS |
+| **Deployment** | Docker, Docker Compose, Nginx                          |
 
 ---
 
@@ -33,32 +33,37 @@ Built with ❤️ using **FastAPI**, **React + Vite**, and advanced **speech tec
 
 ### 🔁 Prerequisites
 
-* **Python:** 3.13+
-* **Node.js:** 24.x+
-* **npm:** 9+
+* **Python** 3.13+
+* **Node.js** 24.x+
+* **npm** 9+
 
 ---
 
 ### 🐍 Backend Setup (FastAPI)
 
-1. Create a Python virtual environment:
+1. Navigate to the backend directory:
+
+   ```sh
+   cd backend
+   ```
+2. Create and activate a Python virtual environment:
 
    ```sh
    python3.13 -m venv venv
    source venv/bin/activate
    ```
-2. Install dependencies:
+3. Install backend dependencies:
 
    ```sh
    pip install -r requirements.txt
    ```
-3. Run the server:
+4. Start the server:
 
    ```sh
    python3 app.py
    ```
-4. Access the API at:
-   [http://localhost:8000](http://localhost:8000)
+5. Access the API and interactive docs at:
+   [http://localhost:8000/docs](http://localhost:8000/docs)
 
 ---
 
@@ -69,7 +74,7 @@ Built with ❤️ using **FastAPI**, **React + Vite**, and advanced **speech tec
    ```sh
    cd frontend
    ```
-2. Install dependencies:
+2. Install frontend dependencies:
 
    ```sh
    npm install
@@ -79,20 +84,21 @@ Built with ❤️ using **FastAPI**, **React + Vite**, and advanced **speech tec
    ```sh
    npm run dev
    ```
-4. Access the frontend at:
+4. App is live at:
    [http://localhost:5173](http://localhost:5173)
 
 ---
 
 ### 🐳 Docker Setup
 
-To run everything using Docker:
+To spin up everything with Docker:
 
 ```sh
 docker-compose up --build
 ```
 
-Access the platform at: [http://localhost](http://localhost)
+Access the full platform at:
+[http://localhost](http://localhost)
 
 ---
 
@@ -100,26 +106,27 @@ Access the platform at: [http://localhost](http://localhost)
 
 ### 🎧 Maze Game
 
-Navigate procedurally generated mazes using **audio instructions**. Perfectly tailored for screen-free gameplay.
+Navigate procedurally generated mazes using **audio instructions**. Perfect for players with visual impairments.
 
 ### 🗣️ Tile Game
 
-Solve increasingly challenging tile puzzles using **natural voice commands**. Accessible and fun for everyone.
+Solve dynamic puzzles with **natural voice commands** and real-time speech recognition.
 
 ---
 
-## 🔗 API Endpoints
+## 🔐 Authentication
 
-Available for:
+* **Google Sign-In (OAuth2)**
+* **JWT Tokens** for secure, persistent sessions
+* Session-based user identification for score tracking
 
-* `POST /register` – User registration
-* `POST /login` – User login
-* `GET /score/global` – Global leaderboard
-* `GET /score/user` – Individual user scores
-* `POST /maze/submit` – Maze game results
-* `POST /tiles/submit` – Tile game results
+---
 
-*Explore all routes in `backend/app.py` and `auth.py`.*
+## 📚 API Documentation
+
+The FastAPI backend includes full interactive API documentation at:
+
+👉 [http://localhost:8000/docs](http://localhost:8000/docs)
 
 ---
 
@@ -129,15 +136,15 @@ Available for:
 Game-Console/
 ├── backend/         # FastAPI backend
 │   ├── games/       # Game logic (maze, tiles)
-│   ├── models.py    # SQLAlchemy models
-│   ├── auth.py      # Auth routes
-│   └── app.py       # Main entry point
+│   ├── models/      # MongoDB models (ODM)
+│   ├── auth.py      # Google OAuth & JWT
+│   └── app.py       # Main app
 ├── frontend/        # React + Vite frontend
-│   ├── src/         # App source files
-│   ├── public/      # Static assets
-├── Dockerfiles/     # Docker configurations
+│   ├── src/         # App logic and views
+│   ├── public/      # Static files
+├── Dockerfiles/     # Backend & frontend Dockerfiles
 ├── docker-compose.yml
-├── nginx/           # Nginx reverse proxy config
+├── nginx/           # Nginx config
 └── README.md
 ```
 
@@ -145,14 +152,14 @@ Game-Console/
 
 ## 🌍 Accessibility Matters
 
-Game Console empowers users with visual impairments to **engage and enjoy** gaming like never before. Using **text-to-speech** and **speech-to-text** via ElevenLabs, we've crafted a **truly inclusive** experience.
+Game Console bridges the gap between accessibility and entertainment, allowing **visually impaired users** to **engage**, **compete**, and **enjoy gaming** through speech technologies.
 
 ---
 
 ## 🤝 Contributing
 
-We welcome contributions!
-Feel free to fork the repo, create issues, and submit pull requests.
+We welcome all contributions!
+Fork, improve, and submit a PR — or just open an issue to start a discussion.
 
 ---
 
