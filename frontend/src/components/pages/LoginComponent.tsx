@@ -7,6 +7,7 @@ import {
   faSignOutAlt,
   faGamepad,
 } from '@fortawesome/free-solid-svg-icons';
+import StyledButton from '../atoms/StyledButton';
 
 interface User {
   id: string;
@@ -205,28 +206,10 @@ export default function LoginComponent({
               {user.email}
             </div>
           </div>
-          <button
+          <StyledButton
             onClick={handleLogout}
-            style={{
-              background: 'transparent',
-              border: '1px solid #61dafb30',
-              borderRadius: '8px',
-              color: '#61dafb',
-              padding: '8px',
-              cursor: 'pointer',
-              transition: 'all 0.2s ease',
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.background = '#61dafb20';
-              e.currentTarget.style.borderColor = '#61dafb';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.background = 'transparent';
-              e.currentTarget.style.borderColor = '#61dafb30';
-            }}
-          >
-            <FontAwesomeIcon icon={faSignOutAlt} />
-          </button>
+            label={<FontAwesomeIcon icon={faSignOutAlt} />}
+          />
         </div>
       </div>
     );
@@ -293,7 +276,7 @@ export default function LoginComponent({
           padding: '3rem 2rem',
           borderRadius: '15px',
           border: '2px solid #61dafb20',
-          minWidth: '400px',
+          width: '30%',
           textAlign: 'center',
           animation: 'fadeInUp 0.8s ease-out 0.2s backwards',
         }}
@@ -313,50 +296,19 @@ export default function LoginComponent({
           </div>
         )}
 
-        <button
+        <StyledButton
+          label={
+            loading ? (
+              <FontAwesomeIcon icon={faSpinner} spin />
+            ) : (
+              <>
+                <FontAwesomeIcon icon={faGoogle} />{' '}
+                {loading ? 'Signing in...' : 'Continue with Google'}
+              </>
+            )
+          }
           onClick={handleGoogleLogin}
-          disabled={loading}
-          style={{
-            width: '100%',
-            padding: '16px 24px',
-            background: loading ? '#8b949e' : '#4285f4',
-            border: 'none',
-            borderRadius: '12px',
-            color: '#fff',
-            fontSize: '16px',
-            fontWeight: 'bold',
-            cursor: loading ? 'not-allowed' : 'pointer',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            gap: '12px',
-            transition: 'all 0.3s ease',
-            boxShadow: loading ? 'none' : '0 4px 12px rgba(66, 133, 244, 0.3)',
-          }}
-          onMouseEnter={(e) => {
-            if (!loading) {
-              e.currentTarget.style.background = '#3367d6';
-              e.currentTarget.style.transform = 'translateY(-2px)';
-              e.currentTarget.style.boxShadow =
-                '0 6px 16px rgba(66, 133, 244, 0.4)';
-            }
-          }}
-          onMouseLeave={(e) => {
-            if (!loading) {
-              e.currentTarget.style.background = '#4285f4';
-              e.currentTarget.style.transform = 'translateY(0)';
-              e.currentTarget.style.boxShadow =
-                '0 4px 12px rgba(66, 133, 244, 0.3)';
-            }
-          }}
-        >
-          {loading ? (
-            <FontAwesomeIcon icon={faSpinner} spin />
-          ) : (
-            <FontAwesomeIcon icon={faGoogle} />
-          )}
-          {loading ? 'Signing in...' : 'Continue with Google'}
-        </button>
+        />
 
         <div
           style={{

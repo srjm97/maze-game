@@ -1,7 +1,4 @@
-import {
-  faGamepad,
-  faThLarge,
-} from '@fortawesome/free-solid-svg-icons';
+import { faGamepad, faThLarge } from '@fortawesome/free-solid-svg-icons';
 
 import GameTile from './components/atoms/GameTile';
 import StyledButton from './components/atoms/StyledButton';
@@ -85,7 +82,7 @@ export default function LandingPage({ onGameSelect }: LandingPageProps) {
             gameType: 'tiles' as const,
           },
         ].map((game, index) => (
-           <GameTile
+          <GameTile
             key={index}
             icon={game.icon}
             title={game.title}
@@ -96,9 +93,9 @@ export default function LandingPage({ onGameSelect }: LandingPageProps) {
         ))}
       </div>
       <StyledButton
-  label="View High Scores"
-  onClick={() => onGameSelect('highscores')}
-/>
+        label="View High Scores"
+        onClick={() => onGameSelect('highscores')}
+      />
 
       <style>
         {`

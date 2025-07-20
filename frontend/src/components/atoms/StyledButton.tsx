@@ -1,7 +1,7 @@
 import React, { ButtonHTMLAttributes } from 'react';
 
 interface StyledButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
-  label: string;
+  label: string | React.ReactNode;
 }
 
 const StyledButton: React.FC<StyledButtonProps> = ({ label, ...props }) => {
@@ -18,20 +18,26 @@ const StyledButton: React.FC<StyledButtonProps> = ({ label, ...props }) => {
         fontWeight: 'bold',
         cursor: 'pointer',
         boxShadow: '0 4px 10px rgba(0, 0, 0, 0.3)',
-        transition: 'all 0.3s ease',
+        transition: 'all 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease',
         textTransform: 'uppercase',
         letterSpacing: '1px',
         ...(props.style || {}), // Allow custom overrides
       }}
       onMouseEnter={(e) => {
         (e.currentTarget as HTMLButtonElement).style.background =
-          'linear-gradient(135deg, #bfa15e, #d6b973)';
-        (e.currentTarget as HTMLButtonElement).style.transform = 'translateY(-3px)';
+          'linear-gradient(135deg, #3fe7ff, #0699cc)';
+        (e.currentTarget as HTMLButtonElement).style.boxShadow =
+          '0 6px 20px rgba(56, 205, 246, 0.5)';
+        (e.currentTarget as HTMLButtonElement).style.transform =
+          'translateY(-3px) scale(1.05)';
       }}
       onMouseLeave={(e) => {
         (e.currentTarget as HTMLButtonElement).style.background =
-          'linear-gradient(135deg, #987e48, #bfa15e)';
-        (e.currentTarget as HTMLButtonElement).style.transform = 'translateY(0)';
+          'linear-gradient(135deg, #38cdf6ff, #067799ff)';
+        (e.currentTarget as HTMLButtonElement).style.boxShadow =
+          '0 4px 10px rgba(0, 0, 0, 0.3)';
+        (e.currentTarget as HTMLButtonElement).style.transform =
+          'translateY(0) scale(1)';
       }}
     >
       {label}
