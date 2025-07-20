@@ -206,6 +206,7 @@ export default function TilesGame({ onBackToMenu }: TilesGameProps) {
       tiles = {tiles}
       difficulty = {difficulty}
       handleTileClick =  {handleTileClick}
+      initializeGame = {initializeGame}
       />
     </div>
   );

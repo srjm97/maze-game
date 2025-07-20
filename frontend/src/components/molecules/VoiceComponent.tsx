@@ -14,10 +14,12 @@ export function VoiceCommand({
     tiles,
     difficulty,
     handleTileClick,
+    initializeGame
 }: {
     tiles: any[];
     difficulty: 'easy' | 'medium' | 'hard';
     handleTileClick: (index: number) => boolean;
+    initializeGame: () => void;
 }) {
     const [mediaRecorder, setMediaRecorder] = useState<MediaRecorder | null>(null);
     const [isRecording, setIsRecording] = useState(false);
@@ -54,6 +56,11 @@ export function VoiceCommand({
             const data = await res.json();
             const text = data.text;
             console.log(text)
+            if (text.includes("new game")) {
+                speak("Starting a new game.");
+                initializeGame();
+                return;
+            }
             const coord = parseVoiceCommand(text);
             if (!coord) return speak("I didn't catch a tile.");
             const idx = chessToIndex(coord);
