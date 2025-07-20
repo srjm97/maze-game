@@ -1,0 +1,16 @@
+version: "3.9"
+
+services:
+  backend:
+    image: gameconsole-backend
+    container_name: backend
+    ports:
+      - "8000:8000"
+
+  frontend:
+    image: gameconsole-frontend
+    container_name: frontend
+    depends_on:
+      - backend
+    ports:
+      - "80:80"
