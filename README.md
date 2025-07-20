@@ -1,111 +1,148 @@
-# Maze Game
+# 🎮 Game Console
 
-A full-stack web-based maze game featuring user authentication, high scores, and multiple game modes. Built with a Python FastAPI backend and a modern React + Vite frontend.
+> **An inclusive gaming platform for the visually impaired**, featuring voice-controlled puzzles, audio-guided mazes, and leaderboard tracking — all delivered through a sleek web interface.
 
-## Table of Contents
-
-- [Features](#features)
-- [Tech Stack](#tech-stack)
-- [Getting Started](#getting-started)
-  - [Backend Setup](#backend-setup)
-  - [Frontend Setup](#frontend-setup)
-  - [Docker Setup](#docker-setup)
-- [Game Modes](#game-modes)
-- [API Endpoints](#api-endpoints)
-- [Project Structure](#project-structure)
-- [Contributing](#contributing)
-- [License](#license)
+Built with ❤️ using **FastAPI**, **React + Vite**, and advanced **speech + vision** technology.
 
 ---
 
-## Features
+## 🧠 What’s Inside?
 
-- 🧩 Maze and Tiles game modes
-- 🔒 User authentication (login/register)
-- 🏆 High scores leaderboard
-- 🎮 Responsive UI with animations
-- 🗣️ Voice command support
-- 📊 Game statistics and controls
-
-## Tech Stack
-
-- **Backend:** Python, FastAPI, SQLAlchemy
-- **Frontend:** React, Vite, TypeScript
-- **Database:** SQLite (default, configurable)
-- **Containerization:** Docker, Docker Compose
-- **Web Server:** Nginx
+* 🧩 **Maze Game** with real-time **audio guidance**
+* 🗣️ **Tile Game** using **voice commands**
+* 🔐 **Secure Google OAuth login** with **JWT-based session management**
+* 📊 **Global and personal leaderboards**
+* 💬 Powered by **ElevenLabs TTS/STT** for full accessibility
+* 🌐 Fully **responsive UI** and accessible UX
 
 ---
 
-## Getting Started
+## 🚀 Tech Stack
 
-### Backend Setup
+| Layer          | Technology                                             |
+| -------------- | ------------------------------------------------------ |
+| **Backend**    | Python 3.13, FastAPI, JWT, OAuth2 (Google)             |
+| **Frontend**   | Node.js 24, React + Vite, TypeScript                   |
+| **Database**   | MongoDB Atlas (Cloud NoSQL)                            |
+| **Speech**     | [ElevenLabs](https://www.elevenlabs.io/) for STT & TTS |
+| **Deployment** | Docker, Docker Compose, Nginx                          |
 
-1. Navigate to the backend folder:
+---
+
+## 🛠️ Getting Started
+
+### 🔁 Prerequisites
+
+* **Python** 3.13+
+* **Node.js** 24.x+
+* **npm** 9+
+
+---
+
+### 🐍 Backend Setup (FastAPI)
+
+1. Navigate to the backend directory:
+
    ```sh
    cd backend
    ```
-2. Install dependencies:
+2. Create and activate a Python virtual environment:
+
+   ```sh
+   python3.13 -m venv venv
+   source venv/bin/activate
+   ```
+3. Install backend dependencies:
+
    ```sh
    pip install -r requirements.txt
    ```
-3. Run the FastAPI server:
+4. Start the server:
+
    ```sh
-   uvicorn app:app --reload
+   python3 app.py
    ```
+5. Access the API and interactive docs at:
+   [http://localhost:8000/docs](http://localhost:8000/docs)
 
-### Frontend Setup
+---
 
-1. Navigate to the frontend folder:
+### 🌐 Frontend Setup (React + Vite)
+
+1. Navigate to the frontend directory:
+
    ```sh
    cd frontend
    ```
-2. Install dependencies:
+2. Install frontend dependencies:
+
    ```sh
    npm install
    ```
 3. Start the development server:
+
    ```sh
    npm run dev
    ```
-
-### Docker Setup
-
-1. Build and start all services:
-   ```sh
-   docker-compose up --build
-   ```
-2. Access the app at [http://localhost](http://localhost)
+4. App is live at:
+   [http://localhost:5173](http://localhost:5173)
 
 ---
 
-## Game Modes
+### 🐳 Docker Setup
 
-- **Maze Game:** Navigate through randomly generated mazes.
-- **Tiles Game:** Solve tile-based puzzles with increasing difficulty.
+To spin up everything with Docker:
+
+```sh
+docker-compose up --build
+```
+
+Access the full platform at:
+[http://localhost](http://localhost)
 
 ---
 
-## API Endpoints
+## 🕹️ Game Modes
 
-The backend exposes RESTful endpoints for authentication, game logic, and high scores. See `backend/app.py` and `backend/auth.py` for details.
+### 🎧 Maze Game
+
+Navigate procedurally generated mazes using **audio instructions**. Perfect for players with visual impairments.
+
+### 🗣️ Tile Game
+
+Solve dynamic puzzles with **natural voice commands** and real-time speech recognition.
 
 ---
 
-## Project Structure
+## 🔐 Authentication
+
+* **Google Sign-In (OAuth2)**
+* **JWT Tokens** for secure, persistent sessions
+* Session-based user identification for score tracking
+
+---
+
+## 📚 API Documentation
+
+The FastAPI backend includes full interactive API documentation at:
+
+👉 [http://localhost:8000/docs](http://localhost:8000/docs)
+
+---
+
+## 📁 Project Structure
 
 ```
-maze-game/
+Game-Console/
 ├── backend/         # FastAPI backend
-│   ├── games/       # Game logic modules
-│   ├── models.py    # Database models
-│   ├── auth.py      # Authentication logic
-│   └── ...
+│   ├── games/       # Game logic (maze, tiles)
+│   ├── models/      # MongoDB models (ODM)
+│   ├── auth.py      # Google OAuth & JWT
+│   └── app.py       # Main app
 ├── frontend/        # React + Vite frontend
-│   ├── src/         # Source code
-│   ├── public/      # Static assets
-│   └── ...
-├── Dockerfiles/     # Dockerfiles for backend & frontend
+│   ├── src/         # App logic and views
+│   ├── public/      # Static files
+├── Dockerfiles/     # Backend & frontend Dockerfiles
 ├── docker-compose.yml
 ├── nginx/           # Nginx config
 └── README.md
@@ -113,14 +150,19 @@ maze-game/
 
 ---
 
-## Contributing
+## 🌍 Accessibility Matters
 
-Contributions are welcome! Please open issues or submit pull requests for improvements and bug fixes.
+Game Console bridges the gap between accessibility and entertainment, allowing **visually impaired users** to **engage**, **compete**, and **enjoy gaming** through speech technologies.
+
+---
+
+## 🤝 Contributing
+
+We welcome all contributions!
+Fork, improve, and submit a PR — or just open an issue to start a discussion.
 
 ---
 
-## License
+## 📄 License
 
-This project is licensed under the MIT License.
-
----
+This project is licensed under the [MIT License](LICENSE).
