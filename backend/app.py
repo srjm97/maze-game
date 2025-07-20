@@ -202,14 +202,20 @@ async def get_top_10_scores(
     game_name: str = Query(...),
     db = Depends(get_database)
 ):
-    """Get top 10 scores (lowest values) for a specific game across all users"""
-    cursor = db.scores.find({"game_name": game_name}).sort("score", 1).limit(10)  # Ascending order, lowest scores first
+    """Get top 10 unique scores (lowest values) for a specific game across all users"""
+    cursor = db.scores.find({"game_name": game_name}).sort("score", 1)
+    seen = set()
     top_scores = []
     async for score_doc in cursor:
-        top_scores.append({
-            "user_email": score_doc["user_email"],
-            "score": score_doc["score"]
-        })
+        key = (score_doc["user_email"], score_doc["score"])
+        if key not in seen:
+            seen.add(key)
+            top_scores.append({
+                "user_email": score_doc["user_email"],
+                "score": score_doc["score"]
+            })
+        if len(top_scores) == 10:
+            break
     return {"game_name": game_name, "top_10_scores": top_scores}
 
 # Word to number mapping
