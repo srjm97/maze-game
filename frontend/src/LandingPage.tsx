@@ -7,7 +7,7 @@ import {
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 interface LandingPageProps {
-  onGameSelect: (gameType: 'maze' | 'tiles') => void;
+  onGameSelect: (gameType: 'maze' | 'tiles' | 'highscores') => void;
 }
 
 export default function LandingPage({ onGameSelect }: LandingPageProps) {
@@ -167,6 +167,9 @@ export default function LandingPage({ onGameSelect }: LandingPageProps) {
           </div>
         ))}
       </div>
+      <button onClick={() => onGameSelect('highscores')}>
+  View High Scores
+</button>
 
       <style>
         {`
